@@ -14,80 +14,74 @@
 #include "max30102.h"
 #include "i2c.h"
 #include "config.h"
-#include"uart.h"
-#include<stdio.h>
-uint32_t aun_ir_buffer[100]; //infrared LED sensor data
-uint32_t aun_red_buffer[100];  //red LED sensor data
-int32_t n_ir_buffer_length; //data length
-int32_t n_spo2;  //SPO2 value
-int8_t ch_spo2_valid;  //indicator to show if the SPO2 calculation is valid
-int32_t n_heart_rate; //heart rate value
-int8_t  ch_hr_valid;  //indicator to show if the heart rate calculation is valid
+#include "uart.h"
+#include <stdio.h>
+uint32_t aun_ir_buffer[100];  // infrared LED sensor data
+uint32_t aun_red_buffer[100]; // red LED sensor data
+int32_t n_ir_buffer_length;   // data length
+int32_t n_spo2;               // SPO2 value
+int8_t ch_spo2_valid;         // indicator to show if the SPO2 calculation is valid
+int32_t n_heart_rate;         // heart rate value
+int8_t ch_hr_valid;           // indicator to show if the heart rate calculation is valid
 uint8_t uch_dummy;
-
-
 
 int main(void)
 {
-    WDTCTL = WDTPW | WDTHOLD;   // stop watchdog timer
+    WDTCTL = WDTPW | WDTHOLD; // stop watchdog timer
     PM5CTL0 &= ~LOCKLPM5;
 
-    configClock ();
-    initI2C ();
-    initTMR ();
+    configClock();
+    initI2C();
+    initTMR();
     _enable_interrupts();
     uca0Init();
 
     P2SEL0 &= ~(BIT0 | BIT1);
-    P2SEL1 |= BIT0 | BIT1;                  // USCI_A0 UART operation
-
+    P2SEL1 |= BIT0 | BIT1; // USCI_A0 UART operation
 
     __bis_SR_register(GIE);
     uca0WriteString("hello");
-    maxim_max30102_reset ();
+    maxim_max30102_reset();
 
-    delay(10);//10 ms
+    delay(10); // 10 ms
 
-    maxim_max30102_init ();
+    maxim_max30102_init();
 
-    n_ir_buffer_length = 100;
-
-    int i = 0;
-    for(i = 0; i < n_ir_buffer_length;i++)
+    while (1)
     {
-        delay(10);
-        maxim_max30102_read_fifo((aun_red_buffer + i),(aun_ir_buffer + i));
-    }
+        long irValue = particleSensor.getIR();
 
-    //calc. from algorithm
-    maxim_heart_rate_and_oxygen_saturation(aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid);
-
-    while(1)
-    {
-        //delete oldest 25 sample (0 - 24), and shift the samples to the left
-        i = 25;
-        for(i = 25; i < 100;i++)
+        if (checkForBeat(irValue) == true)
         {
-            aun_ir_buffer[i - 25] = aun_ir_buffer[i];
-            aun_red_buffer[i - 25] = aun_red_buffer [i];
+            // We sensed a beat!
+            long delta = millis() - lastBeat;
+            lastBeat = millis();
+
+            beatsPerMinute = 60 / (delta / 1000.0);
+
+            if (beatsPerMinute < 255 && beatsPerMinute > 20)
+            {
+                rates[rateSpot++] = (byte)beatsPerMinute; // Store this reading in the array
+                rateSpot %= RATE_SIZE;                    // Wrap variable
+
+                // Take average of readings
+                beatAvg = 0;
+                for (byte x = 0; x < RATE_SIZE; x++)
+                    beatAvg += rates[x];
+                beatAvg /= RATE_SIZE;
+            }
         }
 
-        //add the latest 25 samples
-        i = 75;
-        for(i = 75; i < 100; i++)
-        {
-            delay(10);
-            maxim_max30102_read_fifo((aun_red_buffer + i),(aun_ir_buffer + i));
-        }
+        Serial.print("IR=");
+        Serial.print(irValue);
+        Serial.print(", BPM=");
+        Serial.print(beatsPerMinute);
+        Serial.print(", Avg BPM=");
+        Serial.print(beatAvg);
 
-        //calc. hr and spo2
-        maxim_heart_rate_and_oxygen_saturation(aun_ir_buffer, n_ir_buffer_length, aun_red_buffer, &n_spo2, &ch_spo2_valid, &n_heart_rate, &ch_hr_valid);
-        char buf[20];
-        sprintf(buf, "Heart rate %d\n", (int)n_heart_rate);
-        uca0WriteString(buf);
+        if (irValue < 50000)
+            Serial.print(" No finger?");
     }
-
-    //while(1);
 
     return 0;
 }
