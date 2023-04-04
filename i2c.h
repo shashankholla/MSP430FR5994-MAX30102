@@ -28,4 +28,6 @@ void i2c_write_reg(uint8_t, uint8_t, uint8_t);
 
 void i2c_read (uint8_t*,unsigned int);
 
+void i2c_read2 (uint8_t*,unsigned int, int);
+
 #endif /* I2C_H_ */
