@@ -24,8 +24,9 @@ int32_t spo2;               // SPO2 value
 int8_t validSPO2;         // indicator to show if the SPO2 calculation is valid
 int32_t heartRate;         // heart rate value
 int8_t validHeartRate;           // indicator to show if the heart rate calculation is valid
-uint32_t onlyheartrate = 1;
-
+bool onlyheartrate = 0;
+bool diasyscalc_en = 1;
+int32_t sys, dia;
 #define RATE_SIZE 8 //Increase this for more averaging. 4 is good.
 uint8_t heartRateAvgArr[RATE_SIZE]; //Array of heart rates
 uint8_t heartRateSpot = 0;
@@ -86,7 +87,7 @@ int main(void) {
 
     initTMR();
 
-    uca0Init();
+//    uca0Init();
     initI2C();
     _enable_interrupts();
     __bis_SR_register(GIE);
@@ -97,7 +98,7 @@ int main(void) {
 
 
 
-    while(1) {
+    while(0) {
         check();
         if(available) {
         long irValue = getFIFOIR();
@@ -111,21 +112,30 @@ int main(void) {
         }
 
     }
+    for (i = 0; i < 100; i++)
+                   {
+                       redBuffer[i] = getIR();
+                        irBuffer[i] = getRed();
+                   }
 
-    while (0)
+    maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
+   maxim_max30102_shutdown();
+    __bis_SR_register( LPM3_bits | GIE );
+
+    while (1)
         {
             update = 0;
 
-            for (i = 80; i < 100; i++)
+            for (i = 80; i < bufferLength; i++)
                 {
                   redBuffer[i - 80] = redBuffer[i];
                   irBuffer[i - 80] = irBuffer[i];
                 }
 
-            for (i = 80; i < 100; i++)
+            for (i = 80; i < bufferLength; i++)
                 {
-                    redBuffer[i] = getRed();
-                     irBuffer[i] = getIR();
+                    redBuffer[i] = getIR();
+                     irBuffer[i] = getRed();
 //                     if (checkForBeat(irValue) == true)
 //                            {
 //                         if(lastBeat == -1) {
@@ -154,7 +164,7 @@ int main(void) {
                 }
 
 
-           maxim_max30102_shutdown();
+//           maxim_max30102_shutdown();
 
 
 
@@ -165,14 +175,14 @@ int main(void) {
 
 
 
-           maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, onlyheartrate);
+           maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
 
 
 
            float diff = (heartRate - heartRateAvg)/float(heartRate);
            diff = diff < 0 ? -diff : diff;
 
-           if(validHeartRate) {
+           if(diff < 1 && validHeartRate) {
                update = 1;
                heartRateAvgArr[heartRateSpot++] = heartRate;
                heartRateSpot %= RATE_SIZE;
@@ -190,7 +200,7 @@ int main(void) {
 
            diff = (spo2 - spo2Avg)/float(spo2);
            diff = diff < 0 ? -diff : diff;
-           if(diff < 2 && validSPO2) {
+           if(validSPO2) {
                update=1;
                           spo2RateAvgArr[spo2Spot++] = spo2;
                           spo2Spot %= RATE_SIZE;
@@ -208,13 +218,13 @@ int main(void) {
 
 //           if(millis() - last > 1) {
 //            last = millis();
-//                sprintf(string, "\rIR= %ld Red=%ld beatAvg=%d spo2Avg=%d update=%d", irValue, redValue, heartRateAvg, spo2Avg, update);
-//            uca0WriteString(string);
+                sprintf(string, "\rIR= %ld Red=%ld beatAvg=%d spo2Avg=%d update=%d sys=%ld, dia=%ld", irValue, redValue, heartRateAvg, spo2Avg, update, sys, dia);
+            uca0WriteString(string);
 //            }
-           __bis_SR_register( LPM3_bits | GIE );
-           break;
+//           __bis_SR_register( LPM3_bits | GIE );
+//           break;
            if (irValue < 50000){
-//               uca0WriteString("\rNo finger?");
+               uca0WriteString("\rNo finger?");
                resetHeartRate();
            }
 

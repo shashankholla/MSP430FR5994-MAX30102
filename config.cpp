@@ -21,7 +21,7 @@ void configClock (void)
 
         CSCTL0 = CSKEY;
 
-        CSCTL1 = DCOFSEL_4 | DCORSEL;//DCO 8MHz
+        CSCTL1 = DCOFSEL_3 | DCORSEL;//DCO 8MHz
         CSCTL2 |= (SELA__LFXTCLK | SELS__DCOCLK | SELM__DCOCLK);
         CSCTL3 = DIVA__1 | DIVS__1 | DIVM__1;   // Set all dividers
 

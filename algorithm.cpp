@@ -64,7 +64,7 @@
 
 
 void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid,
-                int32_t *pn_heart_rate, int8_t *pch_hr_valid, uint32_t onlyheartrate)
+                int32_t *pn_heart_rate, int8_t *pch_hr_valid, int32_t* sys, int32_t* dia, bool onlyheartrate, bool diasyscalc_en)
 /**
 * \brief        Calculate the heart rate and SpO2 level
 * \par          Details
@@ -84,7 +84,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
 */
 {
   uint32_t un_ir_mean,un_only_once ;
-  int32_t k, n_i_ratio_count;
+  int32_t k, j, n_i_ratio_count;
   int32_t i, s, m, n_exact_ir_valley_locs_count, n_middle_idx;
   int32_t n_th1, n_npks, n_c_min;
   int32_t an_ir_valley_locs[15] ;
@@ -97,6 +97,11 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
   int32_t an_ratio[5], n_ratio_average;
   int32_t n_nume, n_denom ;
 
+  int32_t A1[100];
+  int32_t A4[100];
+  int32_t A5[100];
+
+
   // calculates DC mean and subtract DC from ir
   un_ir_mean =0;
   for (k=0 ; k<n_ir_buffer_length ; k++ ) un_ir_mean += pun_ir_buffer[k] ;
@@ -106,10 +111,52 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
   for (k=0 ; k<n_ir_buffer_length ; k++ )
     an_x[k] = -1*(pun_ir_buffer[k] - un_ir_mean) ;
 
+
   // 4 pt Moving Average
   for(k=0; k< BUFFER_SIZE-MA4_SIZE; k++){
     an_x[k]=( an_x[k]+an_x[k+1]+ an_x[k+2]+ an_x[k+3])/(int)4;
   }
+  *sys = -999;
+  *dia = -999;
+  if(diasyscalc_en){
+
+  for(k=0; k< BUFFER_SIZE;k++) {
+      A1[k] = k == 0 ? -an_x[k] : an_x[k-1] - an_x[k];
+  }
+
+  for(k=0; k<BUFFER_SIZE; k++) {
+      A4[k] = A1[k+1];
+  }
+
+  for(k=0; k<BUFFER_SIZE; k++) {
+       A4[k] = A1[k+1];
+   }
+
+  for(k=0; k<BUFFER_SIZE; k++) {
+      if(A1[k] <0 & A4[k] > 0) {
+          A5[k] = an_x[k];
+      }
+   }
+
+
+  for (k=0; k<BUFFER_SIZE; k++){
+      if(A5[k] > 0){
+          for (j=0; j<BUFFER_SIZE; j++)
+          {
+              if(A5[j] <0){
+                  *sys = A5[i];
+                  *dia = A5[j];
+              }
+              else
+              {   if(A5[j] >0);
+                      break;
+              }
+          }
+      }
+  }
+
+  }
+
   // calculate threshold
   n_th1=0;
   for ( k=0 ; k<BUFFER_SIZE ;k++){
@@ -135,7 +182,8 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
   }
 
 
-  if(!onlyheartrate) {
+  if(onlyheartrate) return;
+
   //  load raw value again for SPO2 calculation : RED(=y) and IR(=X)
   for (k=0 ; k<n_ir_buffer_length ; k++ )  {
       an_x[k] =  pun_ir_buffer[k] ;
@@ -201,7 +249,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
     *pn_spo2 =  -999 ; // do not use SPO2 since signal an_ratio is out of range
     *pch_spo2_valid  = 0;
   }
-  }
+
 }
 
 
