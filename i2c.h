@@ -30,4 +30,5 @@ void i2c_read (uint8_t*,unsigned int);
 
 void i2c_read2 (uint8_t*,unsigned int, int);
 
+void i2c_read1byte(uint8_t *);
 #endif /* I2C_H_ */

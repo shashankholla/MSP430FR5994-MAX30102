@@ -61,7 +61,7 @@ void initI2C()
     UCB2CTLW0 &= ~(UCTXSTP);
 
     UCB2CTLW0 |= UCMODE_3 | UCMST | UCSSEL__SMCLK | UCSYNC; // I2C master mode, SMCLK
-    UCB2BRW = 20;                                           // 3;//10;                            // fSCL = SMCLK/10 = ~100kHz
+    UCB2BRW = 80;                                           // 3;//10;                            // fSCL = SMCLK/10 = ~100kHz
     UCB2I2CSA = SLAVE_ADDR;                                 // Slave Address
     UCB2CTLW0 &= ~UCSWRST;                                  // Clear SW reset, resume operation
     UCB2IE |= UCNACKIE | UCCLTOIE;                                     // enable NACK ISR (TX and RX?)
@@ -180,26 +180,48 @@ void i2c_read(uint8_t *led, unsigned int RxByteCtr)
         ; // wait for a stop to happen
 }
 
-void i2c_read2(uint8_t *led, unsigned int RxByteCtr, int toGet)
+
+void i2c_read1byte(uint8_t *led)
 {
-    int i = 0;
-    for (i = 0; i < RxByteCtr; i++)
-    {
+    while ((UCB2CTLW0 & UCTXSTT))
+                    ;
+    UCB2CTLW0 |= UCTXSTP; // stop
         while (!(UCB2IFG & UCRXIFG0))
             ; // make sure rx buffer got data
 
+        led[0] = UCB2RXBUF;
+
+    while (UCB2CTLW0 & UCTXSTP)
+        ; // wait for a stop to happen
+}
+
+void i2c_read2(uint8_t *led, unsigned int RxByteCtr, int toGet)
+{
+    int i = 0;
+
+    for (i = 0; i < RxByteCtr; i++)
+    {
+        // make sure rx buffer got data
+
+
         if ((i == RxByteCtr-1) && toGet == 3)
         {
-            while ((UCB2CTLW0 & UCTXSTT))
-                ;
             UCB2CTLW0 |= UCTXSTP; // stop
-        }
+            while (!(UCB2IFG & UCRXIFG0))
+                                   ;
 
+
+        } else {
+            while (!(UCB2IFG & UCRXIFG0))
+                        ;
+        }
         led[i] = UCB2RXBUF;
-        __delay_cycles(100);
+
+//        for(int i=0;i<50;i++);
+
     }
 
-    // while(UCB2CTLW0 & UCTXSTP);//wait for a stop to happen
+//     while(UCB2CTLW0 & UCTXSTP);//wait for a stop to happen
 }
 
 

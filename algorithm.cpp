@@ -63,7 +63,7 @@
 //#include "arduino.h"
 
 
-void maxim_heart_rate_and_oxygen_saturation(uint32_t pun_ir_buffer[100], int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid,
+void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid,
                 int32_t *pn_heart_rate, int8_t *pch_hr_valid, int32_t* sys, int32_t* dia, bool onlyheartrate, bool diasyscalc_en)
 /**
 * \brief        Calculate the heart rate and SpO2 level
@@ -104,12 +104,12 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t pun_ir_buffer[100], int32_t
 
   // calculates DC mean and subtract DC from ir
   un_ir_mean =0;
-  for (k=0 ; k<n_ir_buffer_length ; k++ ) un_ir_mean += pun_ir_buffer[k] ;
+  for (k=0 ; k<n_ir_buffer_length ; k++ ) un_ir_mean += pun_red_buffer[k] ;
   un_ir_mean =un_ir_mean/n_ir_buffer_length ;
 
   // remove DC and invert signal so that we can use peak detector as valley detector
   for (k=0 ; k<n_ir_buffer_length ; k++ )
-    an_x[k] = -1*(pun_ir_buffer[k] - un_ir_mean) ;
+    an_x[k] = -1*(pun_red_buffer[k] - un_ir_mean) ;
 
 
   // 4 pt Moving Average

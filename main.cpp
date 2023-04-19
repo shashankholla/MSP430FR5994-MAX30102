@@ -109,11 +109,11 @@ int main(void) {
 
 
 
-    while(1) {
+    while(0) {
 
         if(available()) {
-        long irValue = getFIFOIR();
-        long redValue = getFIFORed();
+        long irValue = getFIFORed();
+        long redValue = getFIFOIR();
         nextSample();
         long time = millis();
         //int16_t filtered;
@@ -127,13 +127,13 @@ int main(void) {
     }
     for (i = 0; i < 100; i++)
                    {
-        while (available() == false) //do we have new data?
-              check(); //Check the sensor for new data
+//        while (available() == false) //do we have new data?
+//              check(); //Check the sensor for new data
 
 //                    check();
-                       redBuffer[i] = getFIFORed();
-                        irBuffer[i] = getFIFOIR();
-                        nextSample();
+                       redBuffer[i] = getIR();
+                        irBuffer[i] = getRed();
+//                        nextSample();
                    }
 
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
@@ -155,13 +155,13 @@ int main(void) {
 
             for (i = 76; i < bufferLength; i++)
                 {
-                while (available() == false) //do we have new data?
-                              check(); //Check the sensor for new data
+//                while (available() == false) //do we have new data?
+//                              check(); //Check the sensor for new data
 
-                    redBuffer[i] = getFIFORed();
-                     irBuffer[i] = getFIFOIR();
+                    redBuffer[i] = getIR();
+                     irBuffer[i] = getRed();
 
-                     nextSample();
+//                     nextSample();
 //                     if (checkForBeat(irValue) == true)
 //                            {
 //                         if(lastBeat == -1) {
@@ -244,7 +244,8 @@ int main(void) {
 
            if(validSPO2 && validHeartRate) {
 //            last = millis();
-                sprintf(string, "\rIR= %ld Red=%ld beatAvg=%d spo2Avg=%d update=%d sys=%ld, dia=%ld", irValue, redValue, heartRateAvg, spo2Avg, update, sys, dia);
+               // sprintf(string, "\rIR= %ld Red=%ld beatAvg=%d spo2Avg=%d update=%d sys=%ld, dia=%ld", irValue, redValue, heartRate, spo2, update, sys, dia);
+                sprintf(string, "beatAvg=%ld spo2Avg=%ld ", heartRate, spo2);
             uca0WriteString(string);
             }
 //           __bis_SR_register( LPM3_bits | GIE );
