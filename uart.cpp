@@ -23,6 +23,10 @@ void uca0Init(void){
                    // UCBRFx = int ( (52.083-52)*16) = 1
                 UCA0BRW = 4;                           // 8000000/16/115200
                 UCA0MCTLW |= UCOS16 | UCBRF_5 | 0x5500;
+
+//                UCA0BRW = 8;                           // 1000000/16/115200
+//               UCA0MCTLW |= 0 | UCBRF_5 | 0xD600;
+
                 UCA0CTLW0 &= ~UCSWRST;                  // Initialize eUSCI
                 UCA0IE |= UCRXIE;
 

@@ -1,6 +1,7 @@
 #include <msp430.h>
 #include <stdint.h>
 #include "i2c.h"
+#include "config.h"
 
 #define LED_OUT P1OUT
 #define LED_DIR P1DIR
@@ -195,6 +196,7 @@ void i2c_read2(uint8_t *led, unsigned int RxByteCtr, int toGet)
         }
 
         led[i] = UCB2RXBUF;
+        __delay_cycles(100);
     }
 
     // while(UCB2CTLW0 & UCTXSTP);//wait for a stop to happen

@@ -63,7 +63,7 @@
 //#include "arduino.h"
 
 
-void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid,
+void maxim_heart_rate_and_oxygen_saturation(uint32_t pun_ir_buffer[100], int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, int32_t *pn_spo2, int8_t *pch_spo2_valid,
                 int32_t *pn_heart_rate, int8_t *pch_hr_valid, int32_t* sys, int32_t* dia, bool onlyheartrate, bool diasyscalc_en)
 /**
 * \brief        Calculate the heart rate and SpO2 level
@@ -132,9 +132,12 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
        A4[k] = A1[k+1];
    }
 
+
   for(k=0; k<BUFFER_SIZE; k++) {
       if(A1[k] <0 & A4[k] > 0) {
           A5[k] = an_x[k];
+      } else {
+          A5[k] = 0;
       }
    }
 
@@ -182,7 +185,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
   }
 
 
-  if(onlyheartrate) return;
+//  if(onlyheartrate) return;
 
   //  load raw value again for SPO2 calculation : RED(=y) and IR(=X)
   for (k=0 ; k<n_ir_buffer_length ; k++ )  {

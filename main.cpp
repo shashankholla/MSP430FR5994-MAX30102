@@ -15,6 +15,8 @@ volatile uint32_t x;
 char string[50];
 long last = 0;
 
+void testdelay();
+
 #define bufferLength 100
 
 uint32_t irBuffer[100];  // infrared LED sensor data
@@ -45,9 +47,14 @@ int main(void) {
 
     configClock();
 
+
        P1OUT = 0;
        P1DIR = 0xFF;
 
+       P1OUT &= ~(BIT0);  // Set SCL and SDA pins to output low
+       P1DIR |= (BIT0);   // Set SCL and SDA pins to output mode
+
+       P1OUT = BIT0;
        P2OUT = 0;
        P2DIR = 0xFF;
 
@@ -87,8 +94,12 @@ int main(void) {
 
     initTMR();
 
-//    uca0Init();
+    uca0Init();
+
+    uca0WriteString("Hello!\n");
     initI2C();
+
+
     _enable_interrupts();
     __bis_SR_register(GIE);
 
@@ -98,44 +109,59 @@ int main(void) {
 
 
 
-    while(0) {
-        check();
-        if(available) {
+    while(1) {
+
+        if(available()) {
         long irValue = getFIFOIR();
         long redValue = getFIFORed();
         nextSample();
         long time = millis();
-        int16_t filtered;
-        checkForBeat(irValue, &filtered);
-        sprintf(string, "%ld, %ld, %ld", time, irValue, filtered);
+        //int16_t filtered;
+        //checkForBeat(irValue, &filtered);
+        sprintf(string, "%ld, %ld, %ld", time, irValue, redValue);
         uca0WriteString(string);
+        } else {
+            check();
         }
 
     }
     for (i = 0; i < 100; i++)
                    {
-                       redBuffer[i] = getIR();
-                        irBuffer[i] = getRed();
+        while (available() == false) //do we have new data?
+              check(); //Check the sensor for new data
+
+//                    check();
+                       redBuffer[i] = getFIFORed();
+                        irBuffer[i] = getFIFOIR();
+                        nextSample();
                    }
 
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
-   maxim_max30102_shutdown();
-    __bis_SR_register( LPM3_bits | GIE );
+
+//    P1OUT = BIT0;
+
+//    maxim_max30102_shutdown();
+//    __bis_SR_register( LPM3_bits | GIE );
 
     while (1)
         {
             update = 0;
 
-            for (i = 80; i < bufferLength; i++)
+            for (i = 25; i < bufferLength; i++)
                 {
-                  redBuffer[i - 80] = redBuffer[i];
-                  irBuffer[i - 80] = irBuffer[i];
+                  redBuffer[i - 25] = redBuffer[i];
+                  irBuffer[i - 25] = irBuffer[i];
                 }
 
-            for (i = 80; i < bufferLength; i++)
+            for (i = 76; i < bufferLength; i++)
                 {
-                    redBuffer[i] = getIR();
-                     irBuffer[i] = getRed();
+                while (available() == false) //do we have new data?
+                              check(); //Check the sensor for new data
+
+                    redBuffer[i] = getFIFORed();
+                     irBuffer[i] = getFIFOIR();
+
+                     nextSample();
 //                     if (checkForBeat(irValue) == true)
 //                            {
 //                         if(lastBeat == -1) {
@@ -182,7 +208,7 @@ int main(void) {
            float diff = (heartRate - heartRateAvg)/float(heartRate);
            diff = diff < 0 ? -diff : diff;
 
-           if(diff < 1 && validHeartRate) {
+           if(validHeartRate) {
                update = 1;
                heartRateAvgArr[heartRateSpot++] = heartRate;
                heartRateSpot %= RATE_SIZE;
@@ -216,11 +242,11 @@ int main(void) {
                           spo2Avg = spo2Avg/avgct;
                       }
 
-//           if(millis() - last > 1) {
+           if(validSPO2 && validHeartRate) {
 //            last = millis();
                 sprintf(string, "\rIR= %ld Red=%ld beatAvg=%d spo2Avg=%d update=%d sys=%ld, dia=%ld", irValue, redValue, heartRateAvg, spo2Avg, update, sys, dia);
             uca0WriteString(string);
-//            }
+            }
 //           __bis_SR_register( LPM3_bits | GIE );
 //           break;
            if (irValue < 50000){
@@ -256,9 +282,9 @@ void testuart() {
 //}
 
 //
-//void testdelay() {
-//    while(1) {
-//           delay(1000);
-//               P1OUT ^= BIT4;
-//        }
-//}
+void testdelay() {
+    while(1) {
+           delay(250);
+               P1OUT ^= BIT0;
+        }
+}

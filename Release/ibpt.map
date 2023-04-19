@@ -1,7 +1,7 @@
 ******************************************************************************
                   MSP430 Linker PC v21.6.1                     
 ******************************************************************************
->> Linked Wed Apr  5 23:52:32 2023
+>> Linked Tue Apr 18 21:07:52 2023
 
 OUTPUT FILE NAME:   <ibpt.out>
 ENTRY POINT SYMBOL: "_c_int00_noargs_mpu"  address: 00004000
@@ -17,10 +17,10 @@ MEMORY CONFIGURATION
   INFOC                 00001880   00000080  00000000  00000080  RWIX
   INFOB                 00001900   00000080  00000000  00000080  RWIX
   INFOA                 00001980   00000080  00000000  00000080  RWIX
-  RAM                   00001c00   00001000  00000820  000007e0  RWIX
+  RAM                   00001c00   00001000  00000868  00000798  RWIX
   LEARAM                00002c00   00000ec8  00000000  00000ec8  RWIX
   LEASTACK              00003ac8   00000138  00000000  00000138  RWIX
-  FRAM                  00004000   0000bf80  000002fe  0000bc82  RWIX
+  FRAM                  00004000   0000bf80  00000306  0000bc7a  RWIX
   JTAGSIGNATURE         0000ff80   00000004  00000004  00000000  RWIX  ffff 
   BSLSIGNATURE          0000ff84   00000004  00000004  00000000  RWIX  ffff 
   IPESIGNATURE          0000ff88   00000008  00000008  00000000  RWIX  ffff 
@@ -80,7 +80,7 @@ MEMORY CONFIGURATION
   INT53                 0000fffa   00000002  00000002  00000000  RWIX
   INT54                 0000fffc   00000002  00000002  00000000  RWIX
   RESET                 0000fffe   00000002  00000002  00000000  RWIX
-  FRAM2                 00010000   00033ff8  000058ca  0002e72e  RWIX
+  FRAM2                 00010000   00033ff8  00005798  0002e860  RWIX
 
 
 SECTION ALLOCATION MAP
@@ -108,12 +108,12 @@ section   page    origin      length       input sections
 
 .binit     0    00004000    00000000     
 
-.cinit     0    000042c6    00000038     
-                  000042c6    00000015     (.cinit..data.load) [load image, compression = lzss]
-                  000042db    00000001     --HOLE-- [fill = 0]
-                  000042dc    0000000c     (__TI_handler_table)
-                  000042e8    00000006     (.cinit..bss.load) [load image, compression = zero_init]
-                  000042ee    00000010     (__TI_cinit_table)
+.cinit     0    000042ce    00000038     
+                  000042ce    00000015     (.cinit..data.load) [load image, compression = lzss]
+                  000042e3    00000001     --HOLE-- [fill = 0]
+                  000042e4    0000000c     (__TI_handler_table)
+                  000042f0    00000006     (.cinit..bss.load) [load image, compression = zero_init]
+                  000042f6    00000010     (__TI_cinit_table)
 
 .init_array 
 *          0    00004000    00000000     UNINITIALIZED
@@ -126,33 +126,33 @@ section   page    origin      length       input sections
                   00004050    0000000a     config.obj (.text:_isr:_Z10millis_isrv)
                   0000405a    00000008     rts430x_lc_rd_eabi.lib : isr_trap.asm.obj (.text:_isr:__TI_ISR_TRAP)
 
-.bss       0    00001c00    00000754     UNINITIALIZED
+.bss       0    00001c00    0000079c     UNINITIALIZED
                   00001c00    00000190     algorithm.obj (.bss:an_x)
                   00001d90    00000190     algorithm.obj (.bss:an_y)
                   00001f20    00000190     (.common:irBuffer)
                   000020b0    00000190     (.common:redBuffer)
                   00002240    00000080     uart.obj (.bss:buffer$1)
-                  000022c0    00000032     (.common:sense)
-                  000022f2    00000032     (.common:string)
-                  00002324    00000008     (.common:heartRateAvgArr)
-                  0000232c    00000008     (.common:spo2RateAvgArr)
-                  00002334    00000004     (.common:dia)
-                  00002338    00000004     (.common:heartRate)
-                  0000233c    00000004     (.common:irValue)
-                  00002340    00000004     (.common:redValue)
-                  00002344    00000004     (.common:spo2)
-                  00002348    00000004     (.common:sys)
-                  0000234c    00000004     (.common:uca0Receiver)
-                  00002350    00000002     (.common:i)
-                  00002352    00000001     (.common:validHeartRate)
-                  00002353    00000001     (.common:validSPO2)
+                  000022c0    0000007a     (.common:sense)
+                  0000233a    00000032     (.common:string)
+                  0000236c    00000008     (.common:heartRateAvgArr)
+                  00002374    00000008     (.common:spo2RateAvgArr)
+                  0000237c    00000004     (.common:dia)
+                  00002380    00000004     (.common:heartRate)
+                  00002384    00000004     (.common:irValue)
+                  00002388    00000004     (.common:redValue)
+                  0000238c    00000004     (.common:spo2)
+                  00002390    00000004     (.common:sys)
+                  00002394    00000004     (.common:uca0Receiver)
+                  00002398    00000002     (.common:i)
+                  0000239a    00000001     (.common:validHeartRate)
+                  0000239b    00000001     (.common:validSPO2)
 
-.data      0    00002354    0000002c     UNINITIALIZED
-                  00002354    00000013     heartRate.obj (.data)
-                  00002367    00000001     uart.obj (.data)
-                  00002368    00000012     main.obj (.data)
-                  0000237a    00000004     config.obj (.data)
-                  0000237e    00000002     rts430x_lc_rd_eabi.lib : errno.c.obj (.data)
+.data      0    0000239c    0000002c     UNINITIALIZED
+                  0000239c    00000013     heartRate.obj (.data)
+                  000023af    00000001     uart.obj (.data)
+                  000023b0    00000012     main.obj (.data)
+                  000023c2    00000004     config.obj (.data)
+                  000023c6    00000002     rts430x_lc_rd_eabi.lib : errno.c.obj (.data)
 
 .stack     0    00002b60    000000a0     UNINITIALIZED
                   00002b60    00000004     rts430x_lc_rd_eabi.lib : boot.c.obj (.stack)
@@ -293,135 +293,152 @@ SYSNMI     0    0000fffc    00000002
 .reset     0    0000fffe    00000002     
                   0000fffe    00000002     rts430x_lc_rd_eabi.lib : boot.c.obj (.reset)
 
-.const     0    00004062    00000264     
+.const     0    00004062    0000026c     
                   00004062    00000101     rts430x_lc_rd_eabi.lib : ctype.c.obj (.const:.string:_ctypes_)
                   00004163    00000001     --HOLE-- [fill = 0]
                   00004164    000000b8     algorithm.obj (.const:.string:uch_spo2_table)
-                  0000421c    00000066     main.obj (.const:.string)
-                  00004282    00000026     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.const:.string)
-                  000042a8    0000001c     maxim30102.obj (.const:$P$T0$1)
-                  000042c4    00000002     maxim30102.obj (.const:$P$T1$2)
+                  0000421c    0000006e     main.obj (.const:.string)
+                  0000428a    00000026     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.const:.string)
+                  000042b0    0000001c     maxim30102.obj (.const:$P$T0$1)
+                  000042cc    00000002     maxim30102.obj (.const:$P$T1$2)
 
-.text      0    00010000    000058ca     
-                  00010000    0000089a     algorithm.obj (.text:_Z38maxim_heart_rate_and_oxygen_saturationPmlS_PlPaS0_S1_S0_S0_bb)
-                  0001089a    0000072a     rts430x_lc_rd_eabi.lib : addd.c.obj (.text:__mspabi_addd)
-                  00010fc4    00000468                            : frcdivd.c.obj (.text:__TI_frcdivd)
-                  0001142c    00000444     main.obj (.text:main)
-                  00011870    0000034e     rts430x_lc_rd_eabi.lib : div64u.c.obj (.text:__mspabi_divull)
-                  00011bbe    000002a6                            : _printfi.c.obj (.text:__TI_printfi:__TI_printfi)
-                  00011e64    00000292                            : mpyd.c.obj (.text:__mspabi_mpyd)
-                  000120f6    0000027a                            : _printfi.c.obj (.text:__TI_printfi:_setfield___TI_printfi)
-                  00012370    00000268                            : _printfi.c.obj (.text:_pproc_fgea)
-                  000125d8    00000230     algorithm.obj (.text:_Z28maxim_peaks_above_min_heightPlS_S_ll)
-                  00012808    00000224     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:acvt)
-                  00012a2c    0000021c                            : divd.c.obj (.text:__mspabi_divd)
-                  00012c48    00000212     maxim30102.obj (.text:_Z19maxim_max30102_initv)
-                  00012e5a    00000206     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:__TI_printfi:_getarg_diouxp___TI_printfi)
-                  00013060    000001e6                            : _printfi.c.obj (.text:ecvt)
-                  00013246    000001d2     algorithm.obj (.text:_Z26maxim_sort_indices_descendPlS_l)
-                  00013418    000001c8     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:fcvt)
-                  000135e0    000001c0     i2c.obj (.text:_Z7initI2Cv)
-                  000137a0    000001a2     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:_pconv_e)
-                  00013942    00000180     algorithm.obj (.text:_Z17maxim_sort_ascendPll)
-                  00013ac2    0000017c     i2c.obj (.text:_Z11dummy_startv)
-                  00013c3e    00000170     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:_pconv_a)
-                  00013dae    00000164                            : frcmpyd.c.obj (.text:__TI_frcmpyd)
-                  00013f12    0000015a                            : s_scalbn.c.obj (.text:scalbn)
-                  0001406c    00000148                            : _printfi.c.obj (.text:__TI_printfi:_pproc_diouxp___TI_printfi)
-                  000141b4    00000132     maxim30102.obj (.text:_Z5checkv)
-                  000142e6    00000128     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:__TI_printfi:_ltostr___TI_printfi)
-                  0001440e    0000011c     algorithm.obj (.text:_Z24maxim_remove_close_peaksPlS_S_l)
-                  0001452a    000000fc     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:_pconv_g)
-                  00014626    000000ea                            : _printfi.c.obj (.text:__TI_printfi:_pproc_fwp___TI_printfi)
-                  00014710    000000d8                            : cmpd.c.obj (.text:__mspabi_cmpd)
-                  000147e8    000000c8                            : _printfi.c.obj (.text:__TI_printfi:_pproc_wstr___TI_printfi)
-                  000148b0    000000a6                            : _printfi.c.obj (.text:__TI_printfi:_pproc_str___TI_printfi)
-                  00014956    000000a6                            : s_frexp.c.obj (.text:frexp)
-                  000149fc    0000009e                            : fltlid.c.obj (.text:__mspabi_fltlid)
-                  00014a9a    00000090                            : _printfi.c.obj (.text:_ecpy)
-                  00014b2a    00000090                            : _printfi.c.obj (.text:_mcpy)
-                  00014bba    00000090                            : fs_div.asm.obj (.text)
-                  00014c4a    00000080                            : _ltoa.c.obj (.text:__TI_ltoa)
-                  00014cca    00000078                            : _printfi.c.obj (.text:_pconv_f)
-                  00014d42    00000076                            : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
-                  00014db8    00000066                            : fixdli.c.obj (.text:__mspabi_fixdli)
-                  00014e1e    00000064     uart.obj (.text:_Z14uca0ReadStringv)
-                  00014e82    00000062     rts430x_lc_rd_eabi.lib : atoi.c.obj (.text:atoi)
-                  00014ee4    00000060     algorithm.obj (.text:_Z16maxim_find_peaksPlS_S_llll)
-                  00014f44    0000005c     rts430x_lc_rd_eabi.lib : mult64_f5hw.asm.obj (.text:__mpyll)
-                  00014fa0    00000058                            : div32u.asm.obj (.text)
-                  00014ff8    00000054                            : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
-                  0001504c    0000004e                            : _printfi.c.obj (.text:_fcpy)
-                  0001509a    0000004a                            : fs_cmp.asm.obj (.text)
-                  000150e4    0000004a                            : fs_ltof.asm.obj (.text)
-                  0001512e    00000046     maxim30102.obj (.text:_Z5getIRv)
-                  00015174    00000044     config.obj (.text:_Z7initTMRv)
-                  000151b8    00000044     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:sprintf)
-                  000151fc    00000042     maxim30102.obj (.text:_Z6getRedv)
-                  0001523e    00000040     rts430x_lc_rd_eabi.lib : asr64.c.obj (.text:__mspabi_srall)
-                  0001527e    00000040                            : div32s.asm.obj (.text)
-                  000152be    0000003e     maxim30102.obj (.text:_Z23maxim_max30102_shutdownv)
-                  000152fc    0000003e     i2c.obj (.text:_Z9i2c_read2Phji)
-                  0001533a    0000003e     rts430x_lc_rd_eabi.lib : asr32.asm.obj (.text:l_asr_const)
-                  00015378    0000003e                            : lsl32.asm.obj (.text:l_lsl_const)
-                  000153b6    0000003e                            : lsr32.asm.obj (.text:l_lsr_const)
-                  000153f4    0000003a     maxim30102.obj (.text:_Z14readThreeBytesi)
-                  0001542e    0000003a     i2c.obj (.text:_Z8i2c_readPhj)
-                  00015468    0000003a     rts430x_lc_rd_eabi.lib : lsl64.c.obj (.text:__mspabi_sllll)
-                  000154a2    0000003a                            : lsr64.c.obj (.text:__mspabi_srlll)
-                  000154dc    00000032                            : subd.c.obj (.text:__mspabi_subd)
-                  0001550e    00000030     uart.obj (.text:_Z15uca0WriteStringPc)
-                  0001553e    0000002e     rts430x_lc_rd_eabi.lib : negd.c.obj (.text:__mspabi_negd)
-                  0001556c    0000002e                            : s_copysign.c.obj (.text:copysign)
-                  0001559a    0000002c     config.obj (.text:_Z11configClockv)
-                  000155c6    0000002c     i2c.obj (.text:_Z9i2c_starthj)
-                  000155f2    0000002c     MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib : mpu_init.o (.text:__mpu_init)
-                  0001561e    0000002c     rts430x_lc_rd_eabi.lib : mult3264_f5hw.asm.obj (.text:__mpyull)
-                  0001564a    0000002c                            : div16s.asm.obj (.text)
-                  00015676    00000028                            : fixdi.c.obj (.text:__mspabi_fixdi)
-                  0001569e    00000026                            : memccpy.c.obj (.text:memccpy)
-                  000156c4    00000024     i2c.obj (.text:_Z18i2c_repeated_starthj)
-                  000156e8    00000024     rts430x_lc_rd_eabi.lib : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init)
-                  0001570c    00000024                            : mult32_f5hw.asm.obj (.text)
-                  00015730    00000020                            : sprintf.c.obj (.text:_outs)
-                  00015750    0000001e     maxim30102.obj (.text:_Z20maxim_max30102_resetv)
-                  0001576e    0000001c     rts430x_lc_rd_eabi.lib : strchr.c.obj (.text:strchr)
-                  0001578a    0000001a     i2c.obj (.text:_Z9i2c_writeh)
-                  000157a4    00000018     rts430x_lc_rd_eabi.lib : mult16_f5hw.asm.obj (.text)
-                  000157bc    00000016                            : memset.c.obj (.text:memset)
-                  000157d2    00000016                            : div16u.asm.obj (.text)
-                  000157e8    00000016                            : wcslen.c.obj (.text:wcslen)
-                  000157fe    00000014     config.obj (.text:_Z5delayj)
-                  00015812    00000014     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:_outc)
-                  00015826    00000014                            : memcpy.c.obj (.text:memcpy)
-                  0001583a    00000012                            : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
-                  0001584c    00000012                            : toupper.c.obj (.text:toupper)
-                  0001585e    00000010                            : lsr32.asm.obj (.text:l_lsr)
-                  0001586e    0000000e                            : strlen.c.obj (.text:strlen)
-                  0001587c    0000000c     heartRate.obj (.text:_Z14resetHeartRatev)
-                  00015888    0000000c     i2c.obj (.text:_Z8i2c_stopv)
-                  00015894    0000000c     rts430x_lc_rd_eabi.lib : fltid.c.obj (.text:__mspabi_fltid)
-                  000158a0    0000000a     config.obj (.text:_Z6millisv)
-                  000158aa    0000000a     rts430x_lc_rd_eabi.lib : abs.c.obj (.text:abs)
-                  000158b4    0000000a                            : fs_neg.asm.obj (.text)
-                  000158be    00000006                            : exit.c.obj (.text:abort)
-                  000158c4    00000004                            : pre_init.c.obj (.text:_system_pre_init)
-                  000158c8    00000002                            : startup.c.obj (.text:_system_post_cinit)
+.text.1    0    00010000    000035ca     
+                  00010000    000008a6     algorithm.obj (.text:_Z38maxim_heart_rate_and_oxygen_saturationPmlS_PlPaS0_S1_S0_S0_bb)
+                  000108a6    0000072a     rts430x_lc_rd_eabi.lib : addd.c.obj (.text:__mspabi_addd)
+                  00010fd0    00000468                            : frcdivd.c.obj (.text:__TI_frcdivd)
+                  00011438    0000041c     main.obj (.text:main)
+                  00011854    0000034e     rts430x_lc_rd_eabi.lib : div64u.c.obj (.text:__mspabi_divull)
+                  00011ba2    000002a6                            : _printfi.c.obj (.text:__TI_printfi:__TI_printfi)
+                  00011e48    00000292                            : mpyd.c.obj (.text:__mspabi_mpyd)
+                  000120da    0000027a                            : _printfi.c.obj (.text:__TI_printfi:_setfield___TI_printfi)
+                  00012354    00000268                            : _printfi.c.obj (.text:_pproc_fgea)
+                  000125bc    00000234     algorithm.obj (.text:_Z28maxim_peaks_above_min_heightPlS_S_ll)
+                  000127f0    00000224     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:acvt)
+                  00012a14    0000021c                            : divd.c.obj (.text:__mspabi_divd)
+                  00012c30    00000212     maxim30102.obj (.text:_Z19maxim_max30102_initv)
+                  00012e42    00000206     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:__TI_printfi:_getarg_diouxp___TI_printfi)
+                  00013048    000001e6                            : _printfi.c.obj (.text:ecvt)
+                  0001322e    00000002                            : startup.c.obj (.text:_system_post_cinit)
+                  00013230    000001d2     algorithm.obj (.text:_Z26maxim_sort_indices_descendPlS_l)
+                  00013402    000001c8     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:fcvt)
+
+.text.2    0    000135cc    000004e6     
+                  000135cc    000001c2     i2c.obj (.text:_Z7initI2Cv)
+                  0001378e    000001a2     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:_pconv_e)
+                  00013930    00000182     algorithm.obj (.text:_Z17maxim_sort_ascendPll)
+
+.text.3    0    00013ab4    00001272     
+                  00013ab4    0000017e     i2c.obj (.text:_Z11dummy_startv)
+                  00013c32    00000170     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:_pconv_a)
+                  00013da2    00000164                            : frcmpyd.c.obj (.text:__TI_frcmpyd)
+                  00013f06    0000015a                            : s_scalbn.c.obj (.text:scalbn)
+                  00014060    00000148                            : _printfi.c.obj (.text:__TI_printfi:_pproc_diouxp___TI_printfi)
+                  000141a8    00000138     maxim30102.obj (.text:_Z5checkv)
+                  000142e0    00000128     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:__TI_printfi:_ltostr___TI_printfi)
+                  00014408    00000120     algorithm.obj (.text:_Z24maxim_remove_close_peaksPlS_S_l)
+                  00014528    000000fc     rts430x_lc_rd_eabi.lib : _printfi.c.obj (.text:_pconv_g)
+                  00014624    000000ea                            : _printfi.c.obj (.text:__TI_printfi:_pproc_fwp___TI_printfi)
+                  0001470e    000000d8                            : cmpd.c.obj (.text:__mspabi_cmpd)
+                  000147e6    000000c8                            : _printfi.c.obj (.text:__TI_printfi:_pproc_wstr___TI_printfi)
+                  000148ae    000000a6                            : _printfi.c.obj (.text:__TI_printfi:_pproc_str___TI_printfi)
+                  00014954    000000a6                            : s_frexp.c.obj (.text:frexp)
+                  000149fa    0000009e                            : fltlid.c.obj (.text:__mspabi_fltlid)
+                  00014a98    00000090                            : _printfi.c.obj (.text:_ecpy)
+                  00014b28    00000090                            : _printfi.c.obj (.text:_mcpy)
+                  00014bb8    00000080                            : _ltoa.c.obj (.text:__TI_ltoa)
+                  00014c38    00000078                            : _printfi.c.obj (.text:_pconv_f)
+                  00014cb0    00000076                            : copy_decompress_lzss.c.obj (.text:decompress:lzss:__TI_decompress_lzss)
+
+.text.4    0    00014d28    000002e6     
+                  00014d28    00000068     uart.obj (.text:_Z14uca0ReadStringv)
+                  00014d90    00000066     rts430x_lc_rd_eabi.lib : fixdli.c.obj (.text:__mspabi_fixdli)
+                  00014df6    00000062                            : atoi.c.obj (.text:atoi)
+                  00014e58    00000060     algorithm.obj (.text:_Z16maxim_find_peaksPlS_S_llll)
+                  00014eb8    0000005c     rts430x_lc_rd_eabi.lib : mult64_f5hw.asm.obj (.text:__mpyll)
+                  00014f14    00000058                            : div32u.asm.obj (.text)
+                  00014f6c    00000054                            : autoinit.c.obj (.text:__TI_auto_init_nobinit_nopinit_hold_wdt:__TI_auto_init_nobinit_nopinit_hold_wdt)
+                  00014fc0    0000004e                            : _printfi.c.obj (.text:_fcpy)
+
+.text.5    0    00015010    0000032a     
+                  00015010    00000044     config.obj (.text:_Z7initTMRv)
+                  00015054    00000044     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:sprintf)
+                  00015098    00000040     i2c.obj (.text:_Z9i2c_read2Phji)
+                  000150d8    00000040     rts430x_lc_rd_eabi.lib : asr64.c.obj (.text:__mspabi_srall)
+                  00015118    00000040                            : div32s.asm.obj (.text)
+                  00015158    0000003e     maxim30102.obj (.text:_Z23maxim_max30102_shutdownv)
+                  00015196    0000003e     rts430x_lc_rd_eabi.lib : asr32.asm.obj (.text:l_asr_const)
+                  000151d4    0000003e                            : lsl32.asm.obj (.text:l_lsl_const)
+                  00015212    0000003e                            : lsr32.asm.obj (.text:l_lsr_const)
+                  00015250    0000003c     i2c.obj (.text:_Z8i2c_readPhj)
+                  0001528c    0000003a     maxim30102.obj (.text:_Z14readThreeBytesi)
+                  000152c6    0000003a     rts430x_lc_rd_eabi.lib : lsl64.c.obj (.text:__mspabi_sllll)
+                  00015300    0000003a                            : lsr64.c.obj (.text:__mspabi_srlll)
+
+.text.6    0    0001533c    000001fa     
+                  0001533c    00000032     uart.obj (.text:_Z15uca0WriteStringPc)
+                  0001536e    00000032     rts430x_lc_rd_eabi.lib : subd.c.obj (.text:__mspabi_subd)
+                  000153a0    00000030     config.obj (.text:_Z11configClockv)
+                  000153d0    00000030     i2c.obj (.text:_Z9i2c_starthj)
+                  00015400    0000002e     rts430x_lc_rd_eabi.lib : negd.c.obj (.text:__mspabi_negd)
+                  0001542e    0000002e                            : s_copysign.c.obj (.text:copysign)
+                  0001545c    0000002c     maxim30102.obj (.text:_Z10nextSamplev)
+                  00015488    0000002c     MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib : mpu_init.o (.text:__mpu_init)
+                  000154b4    0000002c     rts430x_lc_rd_eabi.lib : mult3264_f5hw.asm.obj (.text:__mpyull)
+                  000154e0    0000002c                            : div16s.asm.obj (.text)
+                  0001550c    0000002a     uart.obj (.text:_Z8uca0Initv)
+
+.text.7    0    00015538    000000de     
+                  00015538    00000028     i2c.obj (.text:_Z18i2c_repeated_starthj)
+                  00015560    00000028     rts430x_lc_rd_eabi.lib : fixdi.c.obj (.text:__mspabi_fixdi)
+                  00015588    00000026                            : memccpy.c.obj (.text:memccpy)
+                  000155ae    00000024                            : copy_zero_init.c.obj (.text:decompress:ZI:__TI_zero_init)
+                  000155d2    00000024                            : mult32_f5hw.asm.obj (.text)
+                  000155f6    00000020                            : sprintf.c.obj (.text:_outs)
+
+.text.8    0    00015618    0000001e     
+                  00015618    0000001e     maxim30102.obj (.text:_Z20maxim_max30102_resetv)
+
+.text.9    0    00015638    000000aa     
+                  00015638    0000001c     i2c.obj (.text:_Z9i2c_writeh)
+                  00015654    0000001c     rts430x_lc_rd_eabi.lib : strchr.c.obj (.text:strchr)
+                  00015670    00000018     maxim30102.obj (.text:_Z9availablev)
+                  00015688    00000018     rts430x_lc_rd_eabi.lib : mult16_f5hw.asm.obj (.text)
+                  000156a0    00000016                            : memset.c.obj (.text:memset)
+                  000156b6    00000016                            : div16u.asm.obj (.text)
+                  000156cc    00000016                            : wcslen.c.obj (.text:wcslen)
+
+.text.10   0    000156e4    0000008e     
+                  000156e4    00000014     maxim30102.obj (.text:_Z9getFIFOIRv)
+                  000156f8    00000014     rts430x_lc_rd_eabi.lib : sprintf.c.obj (.text:_outc)
+                  0001570c    00000014                            : memcpy.c.obj (.text:memcpy)
+                  00015720    00000012                            : copy_decompress_none.c.obj (.text:decompress:none:__TI_decompress_none)
+                  00015732    00000012                            : toupper.c.obj (.text:toupper)
+                  00015744    00000010     maxim30102.obj (.text:_Z10getFIFORedv)
+                  00015754    00000010     rts430x_lc_rd_eabi.lib : lsr32.asm.obj (.text:l_lsr)
+                  00015764    0000000e                            : strlen.c.obj (.text:strlen)
+
+.text.11   0    00015774    00000038     
+                  00015774    0000000c     heartRate.obj (.text:_Z14resetHeartRatev)
+                  00015780    0000000c     i2c.obj (.text:_Z8i2c_stopv)
+                  0001578c    0000000c     rts430x_lc_rd_eabi.lib : fltid.c.obj (.text:__mspabi_fltid)
+                  00015798    0000000a                            : abs.c.obj (.text:abs)
+                  000157a2    00000006                            : exit.c.obj (.text:abort)
+                  000157a8    00000004                            : pre_init.c.obj (.text:_system_pre_init)
 
 MODULE SUMMARY
 
        Module                       code    ro data   rw data
        ------                       ----    -------   -------
     .\
-       algorithm.obj                3992    184       800    
-       main.obj                     1092    102       962    
-       maxim30102.obj               1122    30        0      
-       i2c.obj                      1090    2         0      
-       uart.obj                     172     2         133    
-       config.obj                   152     2         4      
+       algorithm.obj                4014    184       800    
+       main.obj                     1052    110       1034   
+       maxim30102.obj               1096    30        0      
+       i2c.obj                      1108    2         0      
+       uart.obj                     220     2         133    
+       config.obj                   126     2         4      
        heartRate.obj                12      0         19     
     +--+----------------------------+-------+---------+---------+
-       Total:                       7632    322       1918   
+       Total:                       7628    330       1990   
                                                              
     C:\ti\ccs1220\ccs\ccs_base\msp430\lib\FR59xx\MSPMPU_INIT_LIB_CCS_msp430_large_code_restricted_data.lib
        mpu_init.o                   44      0         0      
@@ -441,7 +458,6 @@ MODULE SUMMARY
        cmpd.c.obj                   216     0         0      
        s_frexp.c.obj                166     0         0      
        fltlid.c.obj                 158     0         0      
-       fs_div.asm.obj               144     0         0      
        _ltoa.c.obj                  128     0         0      
        sprintf.c.obj                120     0         0      
        copy_decompress_lzss.c.obj   118     0         0      
@@ -451,8 +467,6 @@ MODULE SUMMARY
        div32u.asm.obj               88      0         0      
        autoinit.c.obj               84      0         0      
        lsr32.asm.obj                78      0         0      
-       fs_cmp.asm.obj               74      0         0      
-       fs_ltof.asm.obj              74      0         0      
        asr64.c.obj                  64      0         0      
        div32s.asm.obj               64      0         0      
        asr32.asm.obj                62      0         0      
@@ -480,7 +494,6 @@ MODULE SUMMARY
        strlen.c.obj                 14      0         0      
        fltid.c.obj                  12      0         0      
        abs.c.obj                    10      0         0      
-       fs_neg.asm.obj               10      0         0      
        isr_trap.asm.obj             8       0         0      
        exit.c.obj                   6       0         0      
        pre_init.c.obj               4       0         0      
@@ -521,24 +534,24 @@ MODULE SUMMARY
        int54.asm.obj                0       2         0      
        startup.c.obj                2       0         0      
     +--+----------------------------+-------+---------+---------+
-       Total:                       15152   365       2      
+       Total:                       14850   365       2      
                                                              
        Stack:                       0       0         160    
        Linker Generated:            0       55        0      
     +--+----------------------------+-------+---------+---------+
-       Grand Total:                 22828   742       2080   
+       Grand Total:                 22522   750       2152   
 
 
 LINKER GENERATED COPY TABLES
 
-__TI_cinit_table @ 000042ee records: 2, size/record: 8, table size: 16
-	.data: load addr=000042c6, load size=00000015 bytes, run addr=00002354, run size=0000002c bytes, compression=lzss
-	.bss: load addr=000042e8, load size=00000006 bytes, run addr=00001c00, run size=00000754 bytes, compression=zero_init
+__TI_cinit_table @ 000042f6 records: 2, size/record: 8, table size: 16
+	.data: load addr=000042ce, load size=00000015 bytes, run addr=0000239c, run size=0000002c bytes, compression=lzss
+	.bss: load addr=000042f0, load size=00000006 bytes, run addr=00001c00, run size=0000079c bytes, compression=zero_init
 
 
 LINKER GENERATED HANDLER TABLE
 
-__TI_handler_table @ 000042dc records: 3, size/record: 4, table size: 12
+__TI_handler_table @ 000042e4 records: 3, size/record: 4, table size: 12
 	index: 0, handler: __TI_zero_init
 	index: 1, handler: __TI_decompress_lzss
 	index: 2, handler: __TI_decompress_none
@@ -809,7 +822,7 @@ address   name
 000004bc  BIN2BCD                                                          
 000004bd  BIN2BCD_H                                                        
 000004bc  BIN2BCD_L                                                        
-000158be  C$$EXIT                                                          
+000157a2  C$$EXIT                                                          
 0000043e  CAPTIO0CTL                                                       
 0000043f  CAPTIO0CTL_H                                                     
 0000043e  CAPTIO0CTL_L                                                     
@@ -999,11 +1012,11 @@ address   name
 00000146  GCCTL1                                                           
 00000147  GCCTL1_H                                                         
 00000146  GCCTL1_L                                                         
-00002354  IR_AC_Max                                                        
-00002356  IR_AC_Min                                                        
-00002358  IR_AC_Signal_Current                                             
-0000235c  IR_AC_Signal_max                                                 
-0000235a  IR_AC_Signal_min                                                 
+0000239c  IR_AC_Max                                                        
+0000239e  IR_AC_Min                                                        
+000023a0  IR_AC_Signal_Current                                             
+000023a4  IR_AC_Signal_max                                                 
+000023a2  IR_AC_Signal_min                                                 
 00000a80  LEACAP                                                           
 00000a82  LEACAPH                                                          
 00000a80  LEACAPL                                                          
@@ -2096,50 +2109,51 @@ address   name
 0000015c  WDTCTL                                                           
 0000015d  WDTCTL_H                                                         
 0000015c  WDTCTL_L                                                         
+00015744  _Z10getFIFORedv                                                  
 00004050  _Z10millis_isrv                                                  
+0001545c  _Z10nextSamplev                                                  
 00004020  _Z11USCI_B0_ISRv                                                 
-0001559a  _Z11configClockv                                                 
-00013ac2  _Z11dummy_startv                                                 
-000153f4  _Z14readThreeBytesi                                              
-0001587c  _Z14resetHeartRatev                                              
-00014e1e  _Z14uca0ReadStringv                                              
-0001550e  _Z15uca0WriteStringPc                                            
-00014ee4  _Z16maxim_find_peaksPlS_S_llll                                   
-00013942  _Z17maxim_sort_ascendPll                                         
-000156c4  _Z18i2c_repeated_starthj                                         
-00012c48  _Z19maxim_max30102_initv                                         
-00015750  _Z20maxim_max30102_resetv                                        
-000152be  _Z23maxim_max30102_shutdownv                                     
-0001440e  _Z24maxim_remove_close_peaksPlS_S_l                              
-00013246  _Z26maxim_sort_indices_descendPlS_l                              
-000125d8  _Z28maxim_peaks_above_min_heightPlS_S_ll                         
+000153a0  _Z11configClockv                                                 
+00013ab4  _Z11dummy_startv                                                 
+0001528c  _Z14readThreeBytesi                                              
+00015774  _Z14resetHeartRatev                                              
+00014d28  _Z14uca0ReadStringv                                              
+0001533c  _Z15uca0WriteStringPc                                            
+00014e58  _Z16maxim_find_peaksPlS_S_llll                                   
+00013930  _Z17maxim_sort_ascendPll                                         
+00015538  _Z18i2c_repeated_starthj                                         
+00012c30  _Z19maxim_max30102_initv                                         
+00015618  _Z20maxim_max30102_resetv                                        
+00015158  _Z23maxim_max30102_shutdownv                                     
+00014408  _Z24maxim_remove_close_peaksPlS_S_l                              
+00013230  _Z26maxim_sort_indices_descendPlS_l                              
+000125bc  _Z28maxim_peaks_above_min_heightPlS_S_ll                         
 00010000  _Z38maxim_heart_rate_and_oxygen_saturationPmlS_PlPaS0_S1_S0_S0_bb
-000141b4  _Z5checkv                                                        
-000157fe  _Z5delayj                                                        
-0001512e  _Z5getIRv                                                        
-000151fc  _Z6getRedv                                                       
-000158a0  _Z6millisv                                                       
+000141a8  _Z5checkv                                                        
 00004038  _Z6uartA0v                                                       
-000135e0  _Z7initI2Cv                                                      
-00015174  _Z7initTMRv                                                      
-0001542e  _Z8i2c_readPhj                                                   
-00015888  _Z8i2c_stopv                                                     
-000152fc  _Z9i2c_read2Phji                                                 
-000155c6  _Z9i2c_starthj                                                   
-0001578a  _Z9i2c_writeh                                                    
+000135cc  _Z7initI2Cv                                                      
+00015010  _Z7initTMRv                                                      
+00015250  _Z8i2c_readPhj                                                   
+00015780  _Z8i2c_stopv                                                     
+0001550c  _Z8uca0Initv                                                     
+00015670  _Z9availablev                                                    
+000156e4  _Z9getFIFOIRv                                                    
+00015098  _Z9i2c_read2Phji                                                 
+000153d0  _Z9i2c_starthj                                                   
+00015638  _Z9i2c_writeh                                                    
 00002c00  __STACK_END                                                      
 000000a0  __STACK_SIZE                                                     
-000042ee  __TI_CINIT_Base                                                  
-000042fe  __TI_CINIT_Limit                                                 
-000042fe  __TI_CINIT_Warm                                                  
-000042dc  __TI_Handler_Table_Base                                          
-000042e8  __TI_Handler_Table_Limit                                         
+000042f6  __TI_CINIT_Base                                                  
+00004306  __TI_CINIT_Limit                                                 
+00004306  __TI_CINIT_Warm                                                  
+000042e4  __TI_Handler_Table_Base                                          
+000042f0  __TI_Handler_Table_Limit                                         
 0000405a  __TI_ISR_TRAP                                                    
-00014ff8  __TI_auto_init_nobinit_nopinit_hold_wdt                          
-00014d42  __TI_decompress_lzss                                             
-0001583a  __TI_decompress_none                                             
-00010fc4  __TI_frcdivd                                                     
-00013dae  __TI_frcmpyd                                                     
+00014f6c  __TI_auto_init_nobinit_nopinit_hold_wdt                          
+00014cb0  __TI_decompress_lzss                                             
+00015720  __TI_decompress_none                                             
+00010fd0  __TI_frcdivd                                                     
+00013da2  __TI_frcmpyd                                                     
 0000ffb4  __TI_int18                                                       
 0000ffb6  __TI_int19                                                       
 0000ffb8  __TI_int20                                                       
@@ -2177,156 +2191,152 @@ address   name
 0000fff8  __TI_int52                                                       
 0000fffa  __TI_int53                                                       
 0000fffc  __TI_int54                                                       
-00014c4a  __TI_ltoa                                                        
+00014bb8  __TI_ltoa                                                        
 ffffffff  __TI_pprof_out_hndl                                              
-00011bbe  __TI_printfi                                                     
+00011ba2  __TI_printfi                                                     
 ffffffff  __TI_prof_data_size                                              
 ffffffff  __TI_prof_data_start                                             
-000156e8  __TI_zero_init                                                   
+000155ae  __TI_zero_init                                                   
 ffffffff  __c_args__                                                       
 00000001  __mpu_enable                                                     
-000155f2  __mpu_init                                                       
-0001089a  __mspabi_addd                                                    
-00014710  __mspabi_cmpd                                                    
-0001509a  __mspabi_cmpf                                                    
-00012a2c  __mspabi_divd                                                    
-00014bba  __mspabi_divf                                                    
-0001564a  __mspabi_divi                                                    
-0001527e  __mspabi_divli                                                   
-000157d2  __mspabi_divu                                                    
-00014fa0  __mspabi_divul                                                   
-00011870  __mspabi_divull                                                  
-00015676  __mspabi_fixdi                                                   
-00014db8  __mspabi_fixdli                                                  
-00015894  __mspabi_fltid                                                   
-000149fc  __mspabi_fltlid                                                  
-000150e4  __mspabi_fltlif                                                  
-00011e64  __mspabi_mpyd                                                    
-000157a4  __mspabi_mpyi_f5hw                                               
-0001570c  __mspabi_mpyl_f5hw                                               
-00014f44  __mspabi_mpyll_f5hw                                              
-0001561e  __mspabi_mpyull_f5hw                                             
-0001553e  __mspabi_negd                                                    
-000158b4  __mspabi_negf                                                    
-0001564a  __mspabi_remi                                                    
-0001527e  __mspabi_remli                                                   
-000157d2  __mspabi_remu                                                    
-00014fa0  __mspabi_remul                                                   
-000153b0  __mspabi_slll_1                                                  
-0001538c  __mspabi_slll_10                                                 
-00015388  __mspabi_slll_11                                                 
-00015384  __mspabi_slll_12                                                 
-00015380  __mspabi_slll_13                                                 
-0001537c  __mspabi_slll_14                                                 
-00015378  __mspabi_slll_15                                                 
-000153ac  __mspabi_slll_2                                                  
-000153a8  __mspabi_slll_3                                                  
-000153a4  __mspabi_slll_4                                                  
-000153a0  __mspabi_slll_5                                                  
-0001539c  __mspabi_slll_6                                                  
-00015398  __mspabi_slll_7                                                  
-00015394  __mspabi_slll_8                                                  
-00015390  __mspabi_slll_9                                                  
-00015468  __mspabi_sllll                                                   
-00015372  __mspabi_sral_1                                                  
-0001534e  __mspabi_sral_10                                                 
-0001534a  __mspabi_sral_11                                                 
-00015346  __mspabi_sral_12                                                 
-00015342  __mspabi_sral_13                                                 
-0001533e  __mspabi_sral_14                                                 
-0001533a  __mspabi_sral_15                                                 
-0001536e  __mspabi_sral_2                                                  
-0001536a  __mspabi_sral_3                                                  
-00015366  __mspabi_sral_4                                                  
-00015362  __mspabi_sral_5                                                  
-0001535e  __mspabi_sral_6                                                  
-0001535a  __mspabi_sral_7                                                  
-00015356  __mspabi_sral_8                                                  
-00015352  __mspabi_sral_9                                                  
-0001523e  __mspabi_srall                                                   
-0001585e  __mspabi_srll                                                    
-000153ee  __mspabi_srll_1                                                  
-000153ca  __mspabi_srll_10                                                 
-000153c6  __mspabi_srll_11                                                 
-000153c2  __mspabi_srll_12                                                 
-000153be  __mspabi_srll_13                                                 
-000153ba  __mspabi_srll_14                                                 
-000153b6  __mspabi_srll_15                                                 
-000153ea  __mspabi_srll_2                                                  
-000153e6  __mspabi_srll_3                                                  
-000153e2  __mspabi_srll_4                                                  
-000153de  __mspabi_srll_5                                                  
-000153da  __mspabi_srll_6                                                  
-000153d6  __mspabi_srll_7                                                  
-000153d2  __mspabi_srll_8                                                  
-000153ce  __mspabi_srll_9                                                  
-000154a2  __mspabi_srlll                                                   
-000154dc  __mspabi_subd                                                    
+00015488  __mpu_init                                                       
+000108a6  __mspabi_addd                                                    
+0001470e  __mspabi_cmpd                                                    
+00012a14  __mspabi_divd                                                    
+000154e0  __mspabi_divi                                                    
+00015118  __mspabi_divli                                                   
+000156b6  __mspabi_divu                                                    
+00014f14  __mspabi_divul                                                   
+00011854  __mspabi_divull                                                  
+00015560  __mspabi_fixdi                                                   
+00014d90  __mspabi_fixdli                                                  
+0001578c  __mspabi_fltid                                                   
+000149fa  __mspabi_fltlid                                                  
+00011e48  __mspabi_mpyd                                                    
+00015688  __mspabi_mpyi_f5hw                                               
+000155d2  __mspabi_mpyl_f5hw                                               
+00014eb8  __mspabi_mpyll_f5hw                                              
+000154b4  __mspabi_mpyull_f5hw                                             
+00015400  __mspabi_negd                                                    
+000154e0  __mspabi_remi                                                    
+00015118  __mspabi_remli                                                   
+000156b6  __mspabi_remu                                                    
+00014f14  __mspabi_remul                                                   
+0001520c  __mspabi_slll_1                                                  
+000151e8  __mspabi_slll_10                                                 
+000151e4  __mspabi_slll_11                                                 
+000151e0  __mspabi_slll_12                                                 
+000151dc  __mspabi_slll_13                                                 
+000151d8  __mspabi_slll_14                                                 
+000151d4  __mspabi_slll_15                                                 
+00015208  __mspabi_slll_2                                                  
+00015204  __mspabi_slll_3                                                  
+00015200  __mspabi_slll_4                                                  
+000151fc  __mspabi_slll_5                                                  
+000151f8  __mspabi_slll_6                                                  
+000151f4  __mspabi_slll_7                                                  
+000151f0  __mspabi_slll_8                                                  
+000151ec  __mspabi_slll_9                                                  
+000152c6  __mspabi_sllll                                                   
+000151ce  __mspabi_sral_1                                                  
+000151aa  __mspabi_sral_10                                                 
+000151a6  __mspabi_sral_11                                                 
+000151a2  __mspabi_sral_12                                                 
+0001519e  __mspabi_sral_13                                                 
+0001519a  __mspabi_sral_14                                                 
+00015196  __mspabi_sral_15                                                 
+000151ca  __mspabi_sral_2                                                  
+000151c6  __mspabi_sral_3                                                  
+000151c2  __mspabi_sral_4                                                  
+000151be  __mspabi_sral_5                                                  
+000151ba  __mspabi_sral_6                                                  
+000151b6  __mspabi_sral_7                                                  
+000151b2  __mspabi_sral_8                                                  
+000151ae  __mspabi_sral_9                                                  
+000150d8  __mspabi_srall                                                   
+00015754  __mspabi_srll                                                    
+0001524a  __mspabi_srll_1                                                  
+00015226  __mspabi_srll_10                                                 
+00015222  __mspabi_srll_11                                                 
+0001521e  __mspabi_srll_12                                                 
+0001521a  __mspabi_srll_13                                                 
+00015216  __mspabi_srll_14                                                 
+00015212  __mspabi_srll_15                                                 
+00015246  __mspabi_srll_2                                                  
+00015242  __mspabi_srll_3                                                  
+0001523e  __mspabi_srll_4                                                  
+0001523a  __mspabi_srll_5                                                  
+00015236  __mspabi_srll_6                                                  
+00015232  __mspabi_srll_7                                                  
+0001522e  __mspabi_srll_8                                                  
+0001522a  __mspabi_srll_9                                                  
+00015300  __mspabi_srlll                                                   
+0001536e  __mspabi_subd                                                    
 00004000  _c_int00_noargs_mpu                                              
 00004062  _ctypes_                                                         
 0000fffe  _reset_vector                                                    
 00002b60  _stack                                                           
-000158c8  _system_post_cinit                                               
-000158c4  _system_pre_init                                                 
-000158be  abort                                                            
-000158aa  abs                                                              
-00014e82  atoi                                                             
-0001556c  copysign                                                         
-0001556c  copysignl                                                        
-00002334  dia                                                              
-0000236d  diasyscalc_en                                                    
-0000237e  errno                                                            
+0001322e  _system_post_cinit                                               
+000157a8  _system_pre_init                                                 
+000157a2  abort                                                            
+00015798  abs                                                              
+00014df6  atoi                                                             
+0001542e  copysign                                                         
+0001542e  copysignl                                                        
+0000237c  dia                                                              
+000023b5  diasyscalc_en                                                    
+000023c6  errno                                                            
 00004000  fram_ipe_end                                                     
 00004000  fram_ipe_start                                                   
 00004000  fram_rw_start                                                    
 00004000  fram_rx_start                                                    
-00014956  frexp                                                            
-00014956  frexpl                                                           
-00002338  heartRate                                                        
-00002374  heartRateAvg                                                     
-00002324  heartRateAvgArr                                                  
-0000236e  heartRateSpot                                                    
-00002350  i                                                                
+00014954  frexp                                                            
+00014954  frexpl                                                           
+00002380  heartRate                                                        
+000023bc  heartRateAvg                                                     
+0000236c  heartRateAvgArr                                                  
+000023b6  heartRateSpot                                                    
+00002398  i                                                                
 00001f20  irBuffer                                                         
-0000233c  irValue                                                          
-00002362  ir_avg_reg                                                       
-00002368  last                                                             
-00002370  lastBeat                                                         
-00013f12  ldexp                                                            
-00013f12  ldexpl                                                           
-0001142c  main                                                             
-0001569e  memccpy                                                          
-00015826  memcpy                                                           
-000157bc  memset                                                           
+00002384  irValue                                                          
+000023aa  ir_avg_reg                                                       
+000023b0  last                                                             
+000023b8  lastBeat                                                         
+00013f06  ldexp                                                            
+00013f06  ldexpl                                                           
+00011438  main                                                             
+00015588  memccpy                                                          
+0001570c  memcpy                                                           
+000156a0  memset                                                           
 0000a501  mpu_ctl0_value                                                   
 00001513  mpu_sam_value                                                    
 00000400  mpu_segment_border1                                              
 00000400  mpu_segment_border2                                              
-00002360  negativeEdge                                                     
-00002366  offset                                                           
-0000236c  onlyheartrate                                                    
-0000235e  positiveEdge                                                     
+000023a8  negativeEdge                                                     
+000023ae  offset                                                           
+000023b4  onlyheartrate                                                    
+000023a6  positiveEdge                                                     
 000020b0  redBuffer                                                        
-00002340  redValue                                                         
-00013f12  scalbn                                                           
-00013f12  scalbnl                                                          
+00002388  redValue                                                         
+00013f06  scalbn                                                           
+00013f06  scalbnl                                                          
 000022c0  sense                                                            
-00002344  spo2                                                             
-00002376  spo2Avg                                                          
-0000232c  spo2RateAvgArr                                                   
-0000236f  spo2Spot                                                         
-000151b8  sprintf                                                          
-0001576e  strchr                                                           
-000022f2  string                                                           
-0001586e  strlen                                                           
-00002348  sys                                                              
-0001584c  toupper                                                          
-00002367  uca0DataReady                                                    
-0000234c  uca0Receiver                                                     
-00002378  update                                                           
-00002352  validHeartRate                                                   
-00002353  validSPO2                                                        
-000157e8  wcslen                                                           
+0000238c  spo2                                                             
+000023be  spo2Avg                                                          
+00002374  spo2RateAvgArr                                                   
+000023b7  spo2Spot                                                         
+00015054  sprintf                                                          
+00015654  strchr                                                           
+0000233a  string                                                           
+00015764  strlen                                                           
+00002390  sys                                                              
+00015732  toupper                                                          
+000023af  uca0DataReady                                                    
+00002394  uca0Receiver                                                     
+000023c0  update                                                           
+0000239a  validHeartRate                                                   
+0000239b  validSPO2                                                        
+000156cc  wcslen                                                           
 
 
 GLOBAL SYMBOLS: SORTED BY Symbol Address 
@@ -3883,39 +3893,39 @@ address   name
 00001f20  irBuffer                                                         
 000020b0  redBuffer                                                        
 000022c0  sense                                                            
-000022f2  string                                                           
-00002324  heartRateAvgArr                                                  
-0000232c  spo2RateAvgArr                                                   
-00002334  dia                                                              
-00002338  heartRate                                                        
-0000233c  irValue                                                          
-00002340  redValue                                                         
-00002344  spo2                                                             
-00002348  sys                                                              
-0000234c  uca0Receiver                                                     
-00002350  i                                                                
-00002352  validHeartRate                                                   
-00002353  validSPO2                                                        
-00002354  IR_AC_Max                                                        
-00002356  IR_AC_Min                                                        
-00002358  IR_AC_Signal_Current                                             
-0000235a  IR_AC_Signal_min                                                 
-0000235c  IR_AC_Signal_max                                                 
-0000235e  positiveEdge                                                     
-00002360  negativeEdge                                                     
-00002362  ir_avg_reg                                                       
-00002366  offset                                                           
-00002367  uca0DataReady                                                    
-00002368  last                                                             
-0000236c  onlyheartrate                                                    
-0000236d  diasyscalc_en                                                    
-0000236e  heartRateSpot                                                    
-0000236f  spo2Spot                                                         
-00002370  lastBeat                                                         
-00002374  heartRateAvg                                                     
-00002376  spo2Avg                                                          
-00002378  update                                                           
-0000237e  errno                                                            
+0000233a  string                                                           
+0000236c  heartRateAvgArr                                                  
+00002374  spo2RateAvgArr                                                   
+0000237c  dia                                                              
+00002380  heartRate                                                        
+00002384  irValue                                                          
+00002388  redValue                                                         
+0000238c  spo2                                                             
+00002390  sys                                                              
+00002394  uca0Receiver                                                     
+00002398  i                                                                
+0000239a  validHeartRate                                                   
+0000239b  validSPO2                                                        
+0000239c  IR_AC_Max                                                        
+0000239e  IR_AC_Min                                                        
+000023a0  IR_AC_Signal_Current                                             
+000023a2  IR_AC_Signal_min                                                 
+000023a4  IR_AC_Signal_max                                                 
+000023a6  positiveEdge                                                     
+000023a8  negativeEdge                                                     
+000023aa  ir_avg_reg                                                       
+000023ae  offset                                                           
+000023af  uca0DataReady                                                    
+000023b0  last                                                             
+000023b4  onlyheartrate                                                    
+000023b5  diasyscalc_en                                                    
+000023b6  heartRateSpot                                                    
+000023b7  spo2Spot                                                         
+000023b8  lastBeat                                                         
+000023bc  heartRateAvg                                                     
+000023be  spo2Avg                                                          
+000023c0  update                                                           
+000023c6  errno                                                            
 00002b60  _stack                                                           
 00002c00  __STACK_END                                                      
 00004000  _c_int00_noargs_mpu                                              
@@ -3928,11 +3938,11 @@ address   name
 00004050  _Z10millis_isrv                                                  
 0000405a  __TI_ISR_TRAP                                                    
 00004062  _ctypes_                                                         
-000042dc  __TI_Handler_Table_Base                                          
-000042e8  __TI_Handler_Table_Limit                                         
-000042ee  __TI_CINIT_Base                                                  
-000042fe  __TI_CINIT_Limit                                                 
-000042fe  __TI_CINIT_Warm                                                  
+000042e4  __TI_Handler_Table_Base                                          
+000042f0  __TI_Handler_Table_Limit                                         
+000042f6  __TI_CINIT_Base                                                  
+00004306  __TI_CINIT_Limit                                                 
+00004306  __TI_CINIT_Warm                                                  
 0000a501  mpu_ctl0_value                                                   
 0000ffb4  __TI_int18                                                       
 0000ffb6  __TI_int19                                                       
@@ -3973,144 +3983,141 @@ address   name
 0000fffc  __TI_int54                                                       
 0000fffe  _reset_vector                                                    
 00010000  _Z38maxim_heart_rate_and_oxygen_saturationPmlS_PlPaS0_S1_S0_S0_bb
-0001089a  __mspabi_addd                                                    
-00010fc4  __TI_frcdivd                                                     
-0001142c  main                                                             
-00011870  __mspabi_divull                                                  
-00011bbe  __TI_printfi                                                     
-00011e64  __mspabi_mpyd                                                    
-000125d8  _Z28maxim_peaks_above_min_heightPlS_S_ll                         
-00012a2c  __mspabi_divd                                                    
-00012c48  _Z19maxim_max30102_initv                                         
-00013246  _Z26maxim_sort_indices_descendPlS_l                              
-000135e0  _Z7initI2Cv                                                      
-00013942  _Z17maxim_sort_ascendPll                                         
-00013ac2  _Z11dummy_startv                                                 
-00013dae  __TI_frcmpyd                                                     
-00013f12  ldexp                                                            
-00013f12  ldexpl                                                           
-00013f12  scalbn                                                           
-00013f12  scalbnl                                                          
-000141b4  _Z5checkv                                                        
-0001440e  _Z24maxim_remove_close_peaksPlS_S_l                              
-00014710  __mspabi_cmpd                                                    
-00014956  frexp                                                            
-00014956  frexpl                                                           
-000149fc  __mspabi_fltlid                                                  
-00014bba  __mspabi_divf                                                    
-00014c4a  __TI_ltoa                                                        
-00014d42  __TI_decompress_lzss                                             
-00014db8  __mspabi_fixdli                                                  
-00014e1e  _Z14uca0ReadStringv                                              
-00014e82  atoi                                                             
-00014ee4  _Z16maxim_find_peaksPlS_S_llll                                   
-00014f44  __mspabi_mpyll_f5hw                                              
-00014fa0  __mspabi_divul                                                   
-00014fa0  __mspabi_remul                                                   
-00014ff8  __TI_auto_init_nobinit_nopinit_hold_wdt                          
-0001509a  __mspabi_cmpf                                                    
-000150e4  __mspabi_fltlif                                                  
-0001512e  _Z5getIRv                                                        
-00015174  _Z7initTMRv                                                      
-000151b8  sprintf                                                          
-000151fc  _Z6getRedv                                                       
-0001523e  __mspabi_srall                                                   
-0001527e  __mspabi_divli                                                   
-0001527e  __mspabi_remli                                                   
-000152be  _Z23maxim_max30102_shutdownv                                     
-000152fc  _Z9i2c_read2Phji                                                 
-0001533a  __mspabi_sral_15                                                 
-0001533e  __mspabi_sral_14                                                 
-00015342  __mspabi_sral_13                                                 
-00015346  __mspabi_sral_12                                                 
-0001534a  __mspabi_sral_11                                                 
-0001534e  __mspabi_sral_10                                                 
-00015352  __mspabi_sral_9                                                  
-00015356  __mspabi_sral_8                                                  
-0001535a  __mspabi_sral_7                                                  
-0001535e  __mspabi_sral_6                                                  
-00015362  __mspabi_sral_5                                                  
-00015366  __mspabi_sral_4                                                  
-0001536a  __mspabi_sral_3                                                  
-0001536e  __mspabi_sral_2                                                  
-00015372  __mspabi_sral_1                                                  
-00015378  __mspabi_slll_15                                                 
-0001537c  __mspabi_slll_14                                                 
-00015380  __mspabi_slll_13                                                 
-00015384  __mspabi_slll_12                                                 
-00015388  __mspabi_slll_11                                                 
-0001538c  __mspabi_slll_10                                                 
-00015390  __mspabi_slll_9                                                  
-00015394  __mspabi_slll_8                                                  
-00015398  __mspabi_slll_7                                                  
-0001539c  __mspabi_slll_6                                                  
-000153a0  __mspabi_slll_5                                                  
-000153a4  __mspabi_slll_4                                                  
-000153a8  __mspabi_slll_3                                                  
-000153ac  __mspabi_slll_2                                                  
-000153b0  __mspabi_slll_1                                                  
-000153b6  __mspabi_srll_15                                                 
-000153ba  __mspabi_srll_14                                                 
-000153be  __mspabi_srll_13                                                 
-000153c2  __mspabi_srll_12                                                 
-000153c6  __mspabi_srll_11                                                 
-000153ca  __mspabi_srll_10                                                 
-000153ce  __mspabi_srll_9                                                  
-000153d2  __mspabi_srll_8                                                  
-000153d6  __mspabi_srll_7                                                  
-000153da  __mspabi_srll_6                                                  
-000153de  __mspabi_srll_5                                                  
-000153e2  __mspabi_srll_4                                                  
-000153e6  __mspabi_srll_3                                                  
-000153ea  __mspabi_srll_2                                                  
-000153ee  __mspabi_srll_1                                                  
-000153f4  _Z14readThreeBytesi                                              
-0001542e  _Z8i2c_readPhj                                                   
-00015468  __mspabi_sllll                                                   
-000154a2  __mspabi_srlll                                                   
-000154dc  __mspabi_subd                                                    
-0001550e  _Z15uca0WriteStringPc                                            
-0001553e  __mspabi_negd                                                    
-0001556c  copysign                                                         
-0001556c  copysignl                                                        
-0001559a  _Z11configClockv                                                 
-000155c6  _Z9i2c_starthj                                                   
-000155f2  __mpu_init                                                       
-0001561e  __mspabi_mpyull_f5hw                                             
-0001564a  __mspabi_divi                                                    
-0001564a  __mspabi_remi                                                    
-00015676  __mspabi_fixdi                                                   
-0001569e  memccpy                                                          
-000156c4  _Z18i2c_repeated_starthj                                         
-000156e8  __TI_zero_init                                                   
-0001570c  __mspabi_mpyl_f5hw                                               
-00015750  _Z20maxim_max30102_resetv                                        
-0001576e  strchr                                                           
-0001578a  _Z9i2c_writeh                                                    
-000157a4  __mspabi_mpyi_f5hw                                               
-000157bc  memset                                                           
-000157d2  __mspabi_divu                                                    
-000157d2  __mspabi_remu                                                    
-000157e8  wcslen                                                           
-000157fe  _Z5delayj                                                        
-00015826  memcpy                                                           
-0001583a  __TI_decompress_none                                             
-0001584c  toupper                                                          
-0001585e  __mspabi_srll                                                    
-0001586e  strlen                                                           
-0001587c  _Z14resetHeartRatev                                              
-00015888  _Z8i2c_stopv                                                     
-00015894  __mspabi_fltid                                                   
-000158a0  _Z6millisv                                                       
-000158aa  abs                                                              
-000158b4  __mspabi_negf                                                    
-000158be  C$$EXIT                                                          
-000158be  abort                                                            
-000158c4  _system_pre_init                                                 
-000158c8  _system_post_cinit                                               
+000108a6  __mspabi_addd                                                    
+00010fd0  __TI_frcdivd                                                     
+00011438  main                                                             
+00011854  __mspabi_divull                                                  
+00011ba2  __TI_printfi                                                     
+00011e48  __mspabi_mpyd                                                    
+000125bc  _Z28maxim_peaks_above_min_heightPlS_S_ll                         
+00012a14  __mspabi_divd                                                    
+00012c30  _Z19maxim_max30102_initv                                         
+0001322e  _system_post_cinit                                               
+00013230  _Z26maxim_sort_indices_descendPlS_l                              
+000135cc  _Z7initI2Cv                                                      
+00013930  _Z17maxim_sort_ascendPll                                         
+00013ab4  _Z11dummy_startv                                                 
+00013da2  __TI_frcmpyd                                                     
+00013f06  ldexp                                                            
+00013f06  ldexpl                                                           
+00013f06  scalbn                                                           
+00013f06  scalbnl                                                          
+000141a8  _Z5checkv                                                        
+00014408  _Z24maxim_remove_close_peaksPlS_S_l                              
+0001470e  __mspabi_cmpd                                                    
+00014954  frexp                                                            
+00014954  frexpl                                                           
+000149fa  __mspabi_fltlid                                                  
+00014bb8  __TI_ltoa                                                        
+00014cb0  __TI_decompress_lzss                                             
+00014d28  _Z14uca0ReadStringv                                              
+00014d90  __mspabi_fixdli                                                  
+00014df6  atoi                                                             
+00014e58  _Z16maxim_find_peaksPlS_S_llll                                   
+00014eb8  __mspabi_mpyll_f5hw                                              
+00014f14  __mspabi_divul                                                   
+00014f14  __mspabi_remul                                                   
+00014f6c  __TI_auto_init_nobinit_nopinit_hold_wdt                          
+00015010  _Z7initTMRv                                                      
+00015054  sprintf                                                          
+00015098  _Z9i2c_read2Phji                                                 
+000150d8  __mspabi_srall                                                   
+00015118  __mspabi_divli                                                   
+00015118  __mspabi_remli                                                   
+00015158  _Z23maxim_max30102_shutdownv                                     
+00015196  __mspabi_sral_15                                                 
+0001519a  __mspabi_sral_14                                                 
+0001519e  __mspabi_sral_13                                                 
+000151a2  __mspabi_sral_12                                                 
+000151a6  __mspabi_sral_11                                                 
+000151aa  __mspabi_sral_10                                                 
+000151ae  __mspabi_sral_9                                                  
+000151b2  __mspabi_sral_8                                                  
+000151b6  __mspabi_sral_7                                                  
+000151ba  __mspabi_sral_6                                                  
+000151be  __mspabi_sral_5                                                  
+000151c2  __mspabi_sral_4                                                  
+000151c6  __mspabi_sral_3                                                  
+000151ca  __mspabi_sral_2                                                  
+000151ce  __mspabi_sral_1                                                  
+000151d4  __mspabi_slll_15                                                 
+000151d8  __mspabi_slll_14                                                 
+000151dc  __mspabi_slll_13                                                 
+000151e0  __mspabi_slll_12                                                 
+000151e4  __mspabi_slll_11                                                 
+000151e8  __mspabi_slll_10                                                 
+000151ec  __mspabi_slll_9                                                  
+000151f0  __mspabi_slll_8                                                  
+000151f4  __mspabi_slll_7                                                  
+000151f8  __mspabi_slll_6                                                  
+000151fc  __mspabi_slll_5                                                  
+00015200  __mspabi_slll_4                                                  
+00015204  __mspabi_slll_3                                                  
+00015208  __mspabi_slll_2                                                  
+0001520c  __mspabi_slll_1                                                  
+00015212  __mspabi_srll_15                                                 
+00015216  __mspabi_srll_14                                                 
+0001521a  __mspabi_srll_13                                                 
+0001521e  __mspabi_srll_12                                                 
+00015222  __mspabi_srll_11                                                 
+00015226  __mspabi_srll_10                                                 
+0001522a  __mspabi_srll_9                                                  
+0001522e  __mspabi_srll_8                                                  
+00015232  __mspabi_srll_7                                                  
+00015236  __mspabi_srll_6                                                  
+0001523a  __mspabi_srll_5                                                  
+0001523e  __mspabi_srll_4                                                  
+00015242  __mspabi_srll_3                                                  
+00015246  __mspabi_srll_2                                                  
+0001524a  __mspabi_srll_1                                                  
+00015250  _Z8i2c_readPhj                                                   
+0001528c  _Z14readThreeBytesi                                              
+000152c6  __mspabi_sllll                                                   
+00015300  __mspabi_srlll                                                   
+0001533c  _Z15uca0WriteStringPc                                            
+0001536e  __mspabi_subd                                                    
+000153a0  _Z11configClockv                                                 
+000153d0  _Z9i2c_starthj                                                   
+00015400  __mspabi_negd                                                    
+0001542e  copysign                                                         
+0001542e  copysignl                                                        
+0001545c  _Z10nextSamplev                                                  
+00015488  __mpu_init                                                       
+000154b4  __mspabi_mpyull_f5hw                                             
+000154e0  __mspabi_divi                                                    
+000154e0  __mspabi_remi                                                    
+0001550c  _Z8uca0Initv                                                     
+00015538  _Z18i2c_repeated_starthj                                         
+00015560  __mspabi_fixdi                                                   
+00015588  memccpy                                                          
+000155ae  __TI_zero_init                                                   
+000155d2  __mspabi_mpyl_f5hw                                               
+00015618  _Z20maxim_max30102_resetv                                        
+00015638  _Z9i2c_writeh                                                    
+00015654  strchr                                                           
+00015670  _Z9availablev                                                    
+00015688  __mspabi_mpyi_f5hw                                               
+000156a0  memset                                                           
+000156b6  __mspabi_divu                                                    
+000156b6  __mspabi_remu                                                    
+000156cc  wcslen                                                           
+000156e4  _Z9getFIFOIRv                                                    
+0001570c  memcpy                                                           
+00015720  __TI_decompress_none                                             
+00015732  toupper                                                          
+00015744  _Z10getFIFORedv                                                  
+00015754  __mspabi_srll                                                    
+00015764  strlen                                                           
+00015774  _Z14resetHeartRatev                                              
+00015780  _Z8i2c_stopv                                                     
+0001578c  __mspabi_fltid                                                   
+00015798  abs                                                              
+000157a2  C$$EXIT                                                          
+000157a2  abort                                                            
+000157a8  _system_pre_init                                                 
 ffffffff  __TI_pprof_out_hndl                                              
 ffffffff  __TI_prof_data_size                                              
 ffffffff  __TI_prof_data_start                                             
 ffffffff  __c_args__                                                       
 
-[1779 symbols]
+[1776 symbols]

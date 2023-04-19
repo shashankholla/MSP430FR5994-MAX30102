@@ -153,14 +153,14 @@ bool safeCheck(uint8_t maxTimeToCheck)
         if (x > 0) // We found new data!
             return (true);
 
-        delay(1);
+
     }
 }
 
 uint32_t getIR()
 {
     // Check the sensor for new data for 250ms
-    if (safeCheck(100))
+    if (safeCheck(10))
         return sense.IR[sense.head];
     else
         return (0); // Sensor failed to find new data
@@ -169,7 +169,7 @@ uint32_t getIR()
 uint32_t getRed()
 {
 
-    if (safeCheck(100))
+    if (safeCheck(10))
            return sense.red[sense.head];
        else
            return (0); // Sensor failed to find new data
@@ -271,7 +271,7 @@ void maxim_max30102_init(void)
     struct reg_write max30102_config[] = {
         {REG_INTR_ENABLE_1, 0x00},
         {REG_INTR_ENABLE_2, 0x00},
-        {REG_FIFO_CONFIG, 0x5F},
+        {REG_FIFO_CONFIG, 0x1F}, // was 5F
         {REG_MODE_CONFIG, MODE_CONFIG},
         {REG_SPO2_CONFIG, 0x27},
         {REG_LED1_PA, 0x3C}, //IR led
