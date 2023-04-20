@@ -26,14 +26,14 @@ uint8_t getWritePointer(void);
 
 
 
-#define STORAGE_SIZE 32 // Each long is 4 bytes so limit this to fit on your micro
+#define STORAGE_SIZE 128 // Each long is 4 bytes so limit this to fit on your micro
 typedef struct Record
 {
     uint32_t red[STORAGE_SIZE];
     uint32_t IR[STORAGE_SIZE];
     uint32_t green[STORAGE_SIZE];
-    uint8_t head;
-    uint8_t tail;
+    uint32_t head;
+    uint32_t tail;
 } sense_struct; // This is our circular buffer of readings from the sensor
 
 sense_struct sense;

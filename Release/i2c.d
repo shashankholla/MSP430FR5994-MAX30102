@@ -22,6 +22,7 @@ i2c.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machi
 i2c.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machine/_stdint.h
 i2c.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/sys/_stdint.h
 i2c.obj: ../i2c.h
+i2c.obj: ../config.h
 
 ../i2c.cpp:
 
@@ -66,4 +67,6 @@ C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machine/_stdin
 C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/sys/_stdint.h:
 
 ../i2c.h:
+
+../config.h:
 

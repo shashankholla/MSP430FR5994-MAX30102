@@ -33,7 +33,7 @@
 #define REG_REV_ID 0xFE
 #define REG_PART_ID 0xFF
 
-#define I2C_BUFFER_LENGTH 32
+#define I2C_BUFFER_LENGTH 128
 
 struct reg_write
 {
@@ -66,9 +66,9 @@ uint16_t check(void)
 {
     // Read register FIDO_DATA in (3-uint8_t * number of active LED) chunks
     // Until FIFO_RD_PTR = FIFO_WR_PTR
-    uint8_t clearrxbuf = UCB2RXBUF;
+//    uint8_t clearrxbuf = UCB2RXBUF;
     uint8_t readPointer = getReadPointer();
-    clearrxbuf = UCB2RXBUF;
+//    clearrxbuf = UCB2RXBUF;
     uint8_t writePointer = getWritePointer();
 
     int numberOfSamples = 0;
@@ -160,7 +160,7 @@ bool safeCheck(uint8_t maxTimeToCheck)
 uint32_t getIR()
 {
     // Check the sensor for new data for 250ms
-    if (safeCheck(200))
+    if (safeCheck(10))
         return sense.IR[sense.head];
     else
         return (0); // Sensor failed to find new data
@@ -169,7 +169,7 @@ uint32_t getIR()
 uint32_t getRed()
 {
 
-    if (safeCheck(200))
+    if (safeCheck(10))
            return sense.red[sense.head];
        else
            return (0); // Sensor failed to find new data
@@ -274,7 +274,7 @@ void maxim_max30102_init(void)
         {REG_INTR_ENABLE_2, 0x00},
         {REG_FIFO_CONFIG, 0x5F}, // was 5F
         {REG_MODE_CONFIG, MODE_CONFIG},
-        {REG_SPO2_CONFIG, 0x27},
+        {REG_SPO2_CONFIG, 0x2D},
         {REG_LED1_PA, 0x3C}, //IR led
         {REG_LED2_PA, 0x3C}, //was  0x3C //Red led
         {REG_LED2_PA + 1, 0x3C},
