@@ -14,6 +14,6 @@ void configClock (void);
 void initTMR (void);
 void delay (unsigned int);
 uint32_t millis (void);
-
+void disableUnwantedGPIO(void);
 
 #endif /* CONFIG_H_ */

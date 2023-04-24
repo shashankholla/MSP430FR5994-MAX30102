@@ -6,6 +6,52 @@
 
 static volatile uint32_t TIMER_MS_COUNT = 0;
 
+void disableUnwantedGPIO(void) {
+    
+    P1OUT = 0;
+    P1DIR = 0xFF;
+
+    P1OUT &= ~(BIT0); // Set SCL and SDA pins to output low
+    P1DIR |= (BIT0);  // Set SCL and SDA pins to output mode
+
+    P1OUT = BIT0;
+    P2OUT = 0;
+    P2DIR = 0xFF;
+
+    P3OUT = 0;
+    P3DIR = 0xFF;
+
+    P4OUT = 0;
+    P4DIR = 0xFF;
+
+    P5OUT = 0;
+    P5DIR = 0xFF;
+
+    P6OUT = 0;
+    P6DIR = 0xFF;
+
+    P8OUT = 0;
+    P8DIR = 0xFF;
+
+    P9OUT = 0;
+    P9DIR = 0xFF;
+
+    PAOUT = 0;
+    PADIR = 0xFFFF;
+
+    PBOUT = 0;
+    PBDIR = 0xFFFF;
+
+    PCOUT = 0;
+    PCDIR = 0xFFFF;
+
+    PDOUT = 0;
+    PDDIR = 0xFFFF;
+
+    PEOUT = 0;
+    PEDIR = 0xFFFF;
+}
+
 void configClock (void)
 {
         WDTCTL = WDTPW | WDTHOLD; // stop watchdog timer
