@@ -12,7 +12,7 @@ static volatile uint32_t TIMER_MS_COUNT = 0;
 volatile uint32_t x;
 #define BIT_SET(x,y) x|=(y)
 #define BIT_CLEAR(x,y) x&= ~(y)
-char string[50];
+char string[100];
 long last = 0;
 
 void testdelay();
@@ -125,7 +125,7 @@ int main(void) {
         }
 
     }
-    for (i = 0; i < 100; i++)
+    for (i = 0; i < 40; i++)
                    {
         while (available() == false) //do we have new data?
               check(); //Check the sensor for new data
@@ -135,15 +135,20 @@ int main(void) {
                         nextSample();
                    }
 
-    //maxim_max30102_shutdown();
+    maxim_max30102_shutdown();
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
 
 
 
-   // P1OUT = BIT0;
+    P1OUT = BIT0;
 
 
-   // __bis_SR_register( LPM3_bits | GIE );
+//    __bis_SR_register( LPM3_bits | GIE );
+
+    PMMCTL0_H = PMMPW_H; // open PMM
+    PMMCTL0_L |= PMMREGOFF; // set Flag to enter LPM4.5 with LPM4 request
+    __bis_SR_register(LPM4_bits|GIE);
+    __no_operation();
 
     while (1)
         {
@@ -246,15 +251,15 @@ int main(void) {
 
            if(1) {
 //            last = millis();
-               sprintf(string, "\rIR= %ld Red=%ld beatAvg=%d spo2Avg=%d update=%d sys=%ld, dia=%ld", irValue, redValue, heartRate, spo2, update, sys, dia);
-                //sprintf(string, "beatAvg=%ld spo2Avg=%ld ", heartRate, spo2);
+               sprintf(string, "\rIR= %lu Red=%lu beatAvg=%lu spo2Avg=%lu update=%d sys=%lu, dia=%lu", irValue, redValue, heartRate, spo2, update, sys, dia);
+           // sprintf(string, "beatAvg=%ld spo2Avg=%ld ", heartRate, spo2);
             uca0WriteString(string);
             }
 //           __bis_SR_register( LPM3_bits | GIE );
 //           break;
            if (irValue < 50000){
                uca0WriteString("\rNo finger?");
-               resetHeartRate();
+              // resetHeartRate();
            }
 
 

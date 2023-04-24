@@ -40,6 +40,7 @@ void uca0WriteByte(const char byte){
 }
 
 void uca0WriteString(char*str){
+
     uca0WriteByte('\r');
     uca0WriteByte('\n');
     do{
