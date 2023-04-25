@@ -274,12 +274,13 @@ void maxim_max30102_init(void)
         {REG_INTR_ENABLE_2, 0x00},
         {REG_FIFO_CONFIG, 0x5F}, // was 5F
         {REG_MODE_CONFIG, MODE_CONFIG},
-        {REG_SPO2_CONFIG, 0x27},
-        {REG_LED1_PA, 0x24}, //IR led
-        {REG_LED2_PA, 0x24}, //was  0x3C //Red led
-        {0x10, 0x7F},
-        // {REG_MULTI_LED_CTRL1, MULTI_LED_CONTROL},
-        // {REG_MULTI_LED_CTRL2, 0x00},
+        {REG_SPO2_CONFIG, 0x24},
+        {REG_LED1_PA, 0x3C}, //IR led
+        {REG_LED2_PA, 0x3C}, //was  0x3C //Red led
+        {REG_LED2_PA + 1, 0x3C},
+        {REG_LED2_PA + 2, 0x3C},
+        {REG_MULTI_LED_CTRL1, MULTI_LED_CONTROL},
+        {REG_MULTI_LED_CTRL2, 0x00},
         {REG_FIFO_WR_PTR, 0x00},
         {REG_OVF_COUNTER, 0x00},
         {REG_FIFO_RD_PTR, 0x00},
