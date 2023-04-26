@@ -249,8 +249,8 @@ void get_spo2(float* pun_ir_buffer, float* pun_red_buffer, int32_t n_ir_buffer_l
     int k;
     
     for (k=0; k<n_ir_buffer_length; ++k) {
-        f_ir_mean += an_x[k];
-        f_red_mean += an_y[k];
+        f_ir_mean += pun_ir_buffer[k];
+        f_red_mean += pun_red_buffer[k];
     }
       f_ir_mean=f_ir_mean/n_ir_buffer_length ;
       f_red_mean=f_red_mean/n_ir_buffer_length ;
