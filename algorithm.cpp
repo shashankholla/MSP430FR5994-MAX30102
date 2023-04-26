@@ -124,40 +124,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
   for(k=0; k< BUFFER_SIZE-MA4_SIZE; k++){
     an_x[k]=( an_x[k]+an_x[k+1]+ an_x[k+2]+ an_x[k+3])/(int)4;
   }
-  f_ir_mean=f_ir_mean/n_ir_buffer_length ;
-  f_red_mean=f_red_mean/n_ir_buffer_length ;
   
-  // remove DC 
-  for (k=0,ptr_x=an_x,ptr_y=an_y; k<n_ir_buffer_length; ++k,++ptr_x,++ptr_y) {
-    *ptr_x = pun_ir_buffer[k] - f_ir_mean;
-    *ptr_y = pun_red_buffer[k] - f_red_mean;
-  }
-
-  // RF, remove linear trend (baseline leveling)
-  beta_ir = rf_linear_regression_beta(an_x, mean_X, sum_X2);
-  beta_red = rf_linear_regression_beta(an_y, mean_X, sum_X2);
-  for(k=0,x=-mean_X,ptr_x=an_x,ptr_y=an_y; k<n_ir_buffer_length; ++k,++x,++ptr_x,++ptr_y) {
-    *ptr_x -= beta_ir*x;
-    *ptr_y -= beta_red*x;
-  }
-  
-    // For SpO2 calculate RMS of both AC signals. In addition, pulse detector needs raw sum of squares for IR
-  f_y_ac=rf_rms(an_y,n_ir_buffer_length,&f_red_sumsq);
-  f_x_ac=rf_rms(an_x,n_ir_buffer_length,&f_ir_sumsq);
-
-  // Calculate Pearson correlation between red and IR
-  *correl=rf_Pcorrelation(an_x, an_y, n_ir_buffer_length)/sqrt(f_red_sumsq*f_ir_sumsq);
-
-  // Find signal periodicity
-  if(*correl>=min_pearson_correlation) {
-    // At the beginning of oximetry run the exact range of heart rate is unknown. This may lead to wrong rate if the next call does not find the _first_
-    // peak of the autocorrelation function. E.g., second peak would yield only 50% of the true rate. 
-    if(LOWEST_PERIOD==n_last_peak_interval) 
-      rf_initialize_periodicity_search(an_x, BUFFER_SIZE, &n_last_peak_interval, HIGHEST_PERIOD, min_autocorrelation_ratio, f_ir_sumsq);
-    // RF, If correlation os good, then find average periodicity of the IR signal. If aperiodic, return periodicity of 0
-    if(n_last_peak_interval!=0)
-      rf_signal_periodicity(an_x, BUFFER_SIZE, &n_last_peak_interval, LOWEST_PERIOD, HIGHEST_PERIOD, min_autocorrelation_ratio, f_ir_sumsq, ratio);
-  } else n_last_peak_interval=0;
 
   for(k=0; k<BUFFER_SIZE; k++) {
       if(A1[k] <0 & A4[k] > 0) {
@@ -184,45 +151,30 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
       }
   }
 
-  }
 
   // calculate threshold
-  n_th1=0;
-  for ( k=0 ; k<BUFFER_SIZE ;k++){
-    n_th1 +=  an_x[k];
-  }
-  n_th1=  n_th1/ ( BUFFER_SIZE);
-  if( n_th1<30) n_th1=30; // min allowed
-  if( n_th1>60) n_th1=60; // max allowed
+    n_th1=0;
+    for ( k=0 ; k<BUFFER_SIZE ;k++){
+      n_th1 +=  an_x[k];
+    }
+    n_th1=  n_th1/ ( BUFFER_SIZE);
+    if( n_th1<30) n_th1=30; // min allowed
+    if( n_th1>60) n_th1=60; // max allowed
 
-  for ( k=0 ; k<15;k++) an_ir_valley_locs[k]=0;
-  // since we flipped signal, we use peak detector as valley detector
-  maxim_find_peaks( an_ir_valley_locs, &n_npks, an_x, BUFFER_SIZE, n_th1, 14, 15 );//peak_height, peak_distance, max_num_peaks
-  n_peak_interval_sum =0;
-  if (n_npks>=2){
-    for (k=1; k<n_npks; k++) n_peak_interval_sum += (an_ir_valley_locs[k] -an_ir_valley_locs[k -1] ) ;
-    n_peak_interval_sum =n_peak_interval_sum/(n_npks-1);
-    *pn_heart_rate =(int32_t)( (FS*(float)60)/ n_peak_interval_sum );
-    *pch_hr_valid  = 1;
-  } else {
-    n_last_peak_interval=LOWEST_PERIOD;
-    *pn_heart_rate = -999; // unable to calculate because signal looks aperiodic
-    *pch_hr_valid  = 0;
-    *pn_spo2 =  -999 ; // do not use SPO2 from this corrupt signal
-    *pch_spo2_valid  = 0; 
-    return;
-  }
-
-  // After trend removal, the mean represents DC level
-  xy_ratio= (f_y_ac*f_ir_mean)/(f_x_ac*f_red_mean);  //formula is (f_y_ac*f_x_dc) / (f_x_ac*f_y_dc) ;
-  if(xy_ratio>0.02 && xy_ratio<1.84) { // Check boundaries of applicability
-    *pn_spo2 = (-45.060*xy_ratio + 30.354)*xy_ratio + 94.845;
-    *pch_spo2_valid = 1;
-  } else {
-    *pn_spo2 =  -999 ; // do not use SPO2 since signal an_ratio is out of range
-    *pch_spo2_valid  = 0; 
-  }
-}
+    for ( k=0 ; k<15;k++) an_ir_valley_locs[k]=0;
+    // since we flipped signal, we use peak detector as valley detector
+    maxim_find_peaks( an_ir_valley_locs, &n_npks, an_x, BUFFER_SIZE, n_th1, 14, 15 );//peak_height, peak_distance, max_num_peaks
+    n_peak_interval_sum =0;
+    if (n_npks>=2){
+      for (k=1; k<n_npks; k++) n_peak_interval_sum += (an_ir_valley_locs[k] -an_ir_valley_locs[k -1] ) ;
+      n_peak_interval_sum =n_peak_interval_sum/(n_npks-1);
+      *pn_heart_rate =(int32_t)( (FS*60)/ n_peak_interval_sum );
+      *pch_hr_valid  = 1;
+    }
+    else  {
+      *pn_heart_rate = -999; // unable to calculate because # of peaks are too small
+      *pch_hr_valid  = 0;
+    }
 
 
   //using exact_ir_valley_locs , find ir-red DC andir-red AC for SPO2 calibration an_ratio
@@ -310,7 +262,7 @@ void get_spo2(float* an_x, float* an_y, int32_t n_ir_buffer_length, float* pn_sp
         sprintf(string, "ratioxy=%f\n ", xy_ratio);
            uca0WriteString(string);
         *pn_spo2 = (-45.060*xy_ratio + 30.354)*xy_ratio + 94.845;
-       *pch_spo2_valid = 1;
+//       *pch_spo2_valid = 1;
      } else {
        *pn_spo2 =  -999 ; // do not use SPO2 since signal an_ratio is out of range
        *pch_spo2_valid  = 0;
@@ -321,82 +273,58 @@ void get_spo2(float* an_x, float* an_y, int32_t n_ir_buffer_length, float* pn_sp
 }
 
 
-void maxim_find_peaks( int32_t *pn_locs, int32_t *n_npks,  float  *pn_x, int32_t n_size, volatile int32_t n_min_height, int32_t n_min_distance, int32_t n_max_num )
-  /**
-* \brief        Signal periodicity
+
+void maxim_find_peaks( int32_t *pn_locs, int32_t *n_npks,  float  *pn_x, int32_t n_size, int32_t n_min_height, int32_t n_min_distance, int32_t n_max_num )
+/**
+* \brief        Find peaks
 * \par          Details
-*               Finds periodicity of the IR signal which can be used to calculate heart rate.
-*               Makes use of the autocorrelation function. If peak autocorrelation is less
-*               than min_aut_ratio fraction of the autocorrelation at lag=0, then the input 
-*               signal is insufficiently periodic and probably indicates motion artifacts.
-*               Robert Fraczkiewicz, 01/07/2018
-* \retval       Average distance between peaks
+*               Find at most MAX_NUM peaks above MIN_HEIGHT separated by at least MIN_DISTANCE
+*
+* \retval       None
 */
 {
-  int32_t n_lag;
-  float aut,aut_left,aut_right,aut_save;
-  bool left_limit_reached=false;
-  // Start from the last periodicity computing the corresponding autocorrelation
-  n_lag=*p_last_periodicity;
-  aut_save=aut=rf_autocorrelation(pn_x, n_size, n_lag);
-  // Is autocorrelation one lag to the left greater?
-  aut_left=aut;
-  do {
-    aut=aut_left;
-    n_lag--;
-    aut_left=rf_autocorrelation(pn_x, n_size, n_lag);
-  } while(aut_left>aut && n_lag>=n_min_distance);
-  // Restore lag of the highest aut
-  if(n_lag<n_min_distance) {
-    left_limit_reached=true;
-    n_lag=*p_last_periodicity;
-    aut=aut_save;
-  } else n_lag++;
-  if(n_lag==*p_last_periodicity) {
-    // Trip to the left made no progress. Walk to the right.
-    aut_right=aut;
-    do {
-      aut=aut_right;
-      n_lag++;
-      aut_right=rf_autocorrelation(pn_x, n_size, n_lag);
-    } while(aut_right>aut && n_lag<=n_max_distance);
-    // Restore lag of the highest aut
-    if(n_lag>n_max_distance) n_lag=0; // Indicates failure
-    else n_lag--;
-    if(n_lag==*p_last_periodicity && left_limit_reached) n_lag=0; // Indicates failure
-  }
-  *ratio=aut/aut_lag0;
-  if(*ratio < min_aut_ratio) n_lag=0; // Indicates failure
-  *p_last_periodicity=n_lag;
+  maxim_peaks_above_min_height( pn_locs, n_npks, pn_x, n_size, n_min_height );
+  maxim_remove_close_peaks( pn_locs, n_npks, pn_x, n_min_distance );
+  *n_npks = min( *n_npks, n_max_num );
 }
 
 void maxim_peaks_above_min_height( int32_t *pn_locs, int32_t *n_npks,  float  *pn_x, int32_t n_size, int32_t n_min_height )
 /**
-* \brief        Root-mean-square variation 
+* \brief        Find peaks above n_min_height
 * \par          Details
-*               Compute root-mean-square variation for a given series pn_x
-*               Robert Fraczkiewicz, 12/25/2017
-* \retval       RMS value and raw sum of squares
+*               Find all peaks above MIN_HEIGHT
+*
+* \retval       None
 */
 {
-  int16_t i;
-  float r,*pn_ptr;
-  (*sumsq)=0.0;
-  for (i=0,pn_ptr=pn_x; i<n_size; ++i,++pn_ptr) {
-    r=(*pn_ptr);
-    (*sumsq) += r*r;
+  int32_t i = 1, n_width;
+  *n_npks = 0;
+
+  while (i < n_size-1){
+    if (pn_x[i] > n_min_height && pn_x[i] > pn_x[i-1]){      // find left edge of potential peaks
+      n_width = 1;
+      while (i+n_width < n_size && pn_x[i] == pn_x[i+n_width])  // find flat peaks
+        n_width++;
+      if (pn_x[i] > pn_x[i+n_width] && (*n_npks) < 15 ){      // find right edge of peaks
+        pn_locs[(*n_npks)++] = i;
+        // for flat peaks, peak location is left edge
+        i += n_width+1;
+      }
+      else
+        i += n_width;
+    }
+    else
+      i++;
   }
-  (*sumsq)/=n_size; // This corresponds to autocorrelation at lag=0
-  return sqrt(*sumsq);
 }
 
 void maxim_remove_close_peaks(int32_t *pn_locs, int32_t *pn_npks, float *pn_x, int32_t n_min_distance)
 /**
-* \brief        Correlation product
+* \brief        Remove peaks
 * \par          Details
-*               Compute scalar product between *pn_x and *pn_y vectors
-*               Robert Fraczkiewicz, 12/25/2017
-* \retval       Correlation product
+*               Remove peaks separated by less than MIN_DISTANCE
+*
+* \retval       None
 */
 {
 
@@ -437,7 +365,7 @@ void maxim_sort_ascend(int32_t  *pn_x, int32_t n_size)
   }
 }
 
-void maxim_sort_indices_descend(float  *pn_x, int32_t *pn_indx, int32_t n_size)
+void maxim_sort_indices_descend(  float  *pn_x, int32_t *pn_indx, int32_t n_size)
 /**
 * \brief        Sort indices
 * \par          Details
@@ -453,8 +381,6 @@ void maxim_sort_indices_descend(float  *pn_x, int32_t *pn_indx, int32_t n_size)
       pn_indx[j] = pn_indx[j-1];
     pn_indx[j] = n_temp;
   }
-  r/=n_size;
-  return r;
 }
 
 float rf_rms(float *pn_x, int32_t n_size, float *sumsq)

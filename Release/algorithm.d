@@ -29,28 +29,12 @@ algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/float.h
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/__undef_macros
 algorithm.obj: ../algorithm.h
-<<<<<<< HEAD
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/math.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/math.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/_defs.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machine/_limits.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/type_traits
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/cstddef
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stddef.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/__nullptr
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/limits
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/support/ti/__limit_defs.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/float.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/float.h
-algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/__undef_macros
-=======
 algorithm.obj: ../uart.h
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/stdbool.h
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdbool.h
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/stdio.h
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdio.h
 algorithm.obj: C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdarg.h
->>>>>>> cd3fb74 (Changed Peak distance, heart rate stable)
 
 ../algorithm.cpp:
 
@@ -110,33 +94,6 @@ C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/__undef
 
 ../algorithm.h:
 
-<<<<<<< HEAD
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/math.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/math.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/_defs.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/machine/_limits.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/type_traits:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/cstddef:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stddef.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/__nullptr:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/limits:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/support/ti/__limit_defs.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/float.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/float.h:
-
-C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/__undef_macros:
-=======
 ../uart.h:
 
 C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/stdbool.h:
@@ -148,5 +105,4 @@ C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/libcxx/stdio.h
 C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdio.h:
 
 C:/ti/ccs1220/ccs/tools/compiler/ti-cgt-msp430_21.6.1.LTS/include/stdarg.h:
->>>>>>> cd3fb74 (Changed Peak distance, heart rate stable)
 
