@@ -179,7 +179,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
 
   //using exact_ir_valley_locs , find ir-red DC andir-red AC for SPO2 calibration an_ratio
   //finding AC/DC maximum of raw
-  get_spo2(an_x, an_y, n_ir_buffer_length, pn_spo2, pch_spo2_valid);
+  get_spo2(pun_ir_buffer, pun_red_buffer, n_ir_buffer_length, pn_spo2, pch_spo2_valid);
 
 
   return;
@@ -239,18 +239,27 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
 
 }
 
-void get_spo2(float* an_x, float* an_y, int32_t n_ir_buffer_length, float* pn_spo2, int8_t* pch_spo2_valid) {
+void get_spo2(float* pun_ir_buffer, float* pun_red_buffer, int32_t n_ir_buffer_length, float* pn_spo2, int8_t* pch_spo2_valid) {
     float f_ir_mean,f_red_mean,f_ir_sumsq,f_red_sumsq;
-      f_ir_mean=0.0;
-      f_red_mean=0.0;
-      int k;
-      for (k=0; k<n_ir_buffer_length; ++k) {
+    float an_x[BUFFER_SIZE], *ptr_x; //ir
+    float an_y[BUFFER_SIZE], *ptr_y; //red
+    
+    f_ir_mean=0.0;
+    f_red_mean=0.0;
+    int k;
+    
+    for (k=0; k<n_ir_buffer_length; ++k) {
         f_ir_mean += an_x[k];
         f_red_mean += an_y[k];
-      }
+    }
       f_ir_mean=f_ir_mean/n_ir_buffer_length ;
       f_red_mean=f_red_mean/n_ir_buffer_length ;
 
+
+    for (k=0,ptr_x=an_x,ptr_y=an_y; k<n_ir_buffer_length; ++k,++ptr_x,++ptr_y) {
+        *ptr_x = pun_ir_buffer[k] - f_ir_mean;
+        *ptr_y = pun_red_buffer[k] - f_red_mean;
+      }
 
     float f_y_ac=rf_rms(an_y,n_ir_buffer_length,&f_red_sumsq);
     float f_x_ac=rf_rms(an_x,n_ir_buffer_length,&f_ir_sumsq);
