@@ -14,6 +14,8 @@ volatile uint32_t x;
 #define BIT_CLEAR(x, y) x &= ~(y)
 char string[100];
 long last = 0;
+volatile int zz = 0;
+volatile int done = 0, done2 = 0;
 
 void testdelay();
 
@@ -51,16 +53,49 @@ int main(void)
 
     initTMR();
 
-    uca0Init();
+    //uca0Init();
 
-    uca0WriteString("Hello!\n");
+    //uca0WriteString("Hello!\n");
     initI2C();
 
-    _enable_interrupts();
-    __bis_SR_register(GIE);
+
 
     maxim_max30102_reset();
+    __delay_cycles(100);
+
+    __bis_SR_register(GIE);
     maxim_max30102_init();
+    __bis_SR_register(LPM0_bits);
+
+    while(!done){
+        check();
+        while(available() && zz < bufferLength) {
+                   redBuffer[zz] = getFIFORed();
+                   irBuffer[zz] = getFIFOIR();
+                   nextSample();
+                   zz++;
+                   if(zz == bufferLength)break;
+               }
+
+
+           maxim_enable_interrupt();
+           done2 = 0;
+
+        if(zz == bufferLength) {
+            done = 1;
+            done2 = 1;
+            __bic_SR_register(GIE);
+        } else {
+            __bis_SR_register(GIE);
+        }
+
+        while(!done2);
+
+    }
+    maxim_max30102_shutdown();
+    maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
+    P1OUT |= BIT2;
+    __bis_SR_register(LPM0_bits);
 
     while (1)
     {
@@ -184,7 +219,7 @@ int main(void)
 
     P1OUT = BIT0;
 
-    __bis_SR_register(LPM3_bits | GIE);
+//    __bis_SR_register(LPM3_bits | GIE);
 
     PMMCTL0_H = PMMPW_H;    // open PMM
     PMMCTL0_L |= PMMREGOFF; // set Flag to enter LPM4.5 with LPM4 request
@@ -338,4 +373,14 @@ void testdelay()
         delay(250);
         P1OUT ^= BIT0;
     }
+}
+
+#pragma vector=PORT1_VECTOR
+__interrupt void Port_1(void) {
+
+//P1OUT = BIT0;
+P1IFG &= ~BIT4;
+done2 = 1;
+
+__bic_SR_register_on_exit(LPM0_bits|GIE);
 }

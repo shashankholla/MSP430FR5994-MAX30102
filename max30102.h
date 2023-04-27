@@ -23,10 +23,8 @@ uint32_t getRed();
 uint8_t getReadPointer(void);
 uint8_t getWritePointer(void);
 
-
-
-
-#define STORAGE_SIZE 128 // Each long is 4 bytes so limit this to fit on your micro
+void maxim_enable_interrupt(void);
+#define STORAGE_SIZE 48 // Each long is 4 bytes so limit this to fit on your micro
 typedef struct Record
 {
     uint32_t red[STORAGE_SIZE];

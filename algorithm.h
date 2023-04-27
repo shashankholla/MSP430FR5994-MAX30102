@@ -54,7 +54,7 @@ const uint8_t uch_spo2_table[184]={ 95, 95, 95, 96, 96, 96, 97, 97, 97, 97, 97, 
               3, 2, 1 } ;
 static  float an_x[ BUFFER_SIZE]; //ir
 static  float an_y[ BUFFER_SIZE]; //red
-void get_spo2(float* an_x, float* an_y, int32_t n_ir_buffer_length, float* pn_spo2, int8_t* pch_spo2_valid);
+void get_spo2(uint32_t* pun_ir_buffer, uint32_t* pun_red_buffer, int32_t n_ir_buffer_length, float* pn_spo2, int8_t* pch_spo2_valid);
 
 float rf_rms(float *pn_x, int32_t n_size, float *sumsq);
 void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_ir_buffer_length, uint32_t *pun_red_buffer, float *pn_spo2, int8_t *pch_spo2_valid, int32_t *pn_heart_rate, int8_t *pch_hr_valid, int32_t* sys, int32_t* dia,bool onlyheartrate, bool diasyscalc_en);

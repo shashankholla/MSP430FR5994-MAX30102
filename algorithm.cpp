@@ -239,7 +239,7 @@ void maxim_heart_rate_and_oxygen_saturation(uint32_t *pun_ir_buffer, int32_t n_i
 
 }
 
-void get_spo2(float* pun_ir_buffer, float* pun_red_buffer, int32_t n_ir_buffer_length, float* pn_spo2, int8_t* pch_spo2_valid) {
+void get_spo2(uint32_t* pun_ir_buffer, uint32_t* pun_red_buffer, int32_t n_ir_buffer_length, float* pn_spo2, int8_t* pch_spo2_valid) {
     float f_ir_mean,f_red_mean,f_ir_sumsq,f_red_sumsq;
     float an_x[BUFFER_SIZE], *ptr_x; //ir
     float an_y[BUFFER_SIZE], *ptr_y; //red

@@ -33,7 +33,7 @@
 #define REG_REV_ID 0xFE
 #define REG_PART_ID 0xFF
 
-#define I2C_BUFFER_LENGTH 128
+#define I2C_BUFFER_LENGTH 192
 
 struct reg_write
 {
@@ -66,14 +66,15 @@ uint16_t check(void)
 {
     // Read register FIDO_DATA in (3-uint8_t * number of active LED) chunks
     // Until FIFO_RD_PTR = FIFO_WR_PTR
-//    uint8_t clearrxbuf = UCB2RXBUF;
+
     uint8_t readPointer = getReadPointer();
-//    clearrxbuf = UCB2RXBUF;
+
     uint8_t writePointer = getWritePointer();
 
     int numberOfSamples = 0;
     int activeLEDs = ACTIVE_LEDS;
     // Do we have new data?
+    if(readPointer == writePointer) writePointer = 32;
     if (readPointer != writePointer)
     {
         // Calculate the number of readings we need to get from sensor
@@ -248,7 +249,9 @@ void maxim_max30102_reset(void)
     //     i2c_write(REG_MODE_CONFIG);
     //     i2c_write(0x40);//shut down IC for LPM usage
     //     i2c_stop ();
+    volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
     writeRegister8(SLAVE_ADDR, REG_MODE_CONFIG, 0x40); // Reset
+
 }
 
 void maxim_max30102_init(void)
@@ -270,9 +273,9 @@ void maxim_max30102_init(void)
     };*/
 
     struct reg_write max30102_config[] = {
-        {REG_INTR_ENABLE_1, 0x00},
+        {REG_INTR_ENABLE_1, 0x40},
         {REG_INTR_ENABLE_2, 0x00},
-        {REG_FIFO_CONFIG, 0x5F}, // was 5F
+        {REG_FIFO_CONFIG, 0x40}, // was 5F
         {REG_MODE_CONFIG, MODE_CONFIG},
         {REG_SPO2_CONFIG, 0x24},
         {REG_LED1_PA, 0x3C}, //IR led
@@ -292,7 +295,14 @@ void maxim_max30102_init(void)
     }
 }
 
+void maxim_enable_interrupt(void) {
+//    writeRegister8(SLAVE_ADDR, 0x00, 0x00);
+    volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
+    writeRegister8(SLAVE_ADDR, REG_INTR_ENABLE_1, 0x40);
+  //  volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
+//    volatile uint8_t py = readRegister8(SLAVE_ADDR, 0x02);
 
+}
 
 void maxim_max30102_shutdown(void)
 {
