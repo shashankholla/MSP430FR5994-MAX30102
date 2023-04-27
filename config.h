@@ -9,7 +9,7 @@
 #define CONFIG_H_
 #include <stdint.h>
 
-
+void dmaConfig(void);
 void configClock (void);
 void initTMR (void);
 void delay (unsigned int);

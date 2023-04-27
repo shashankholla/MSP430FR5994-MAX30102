@@ -58,7 +58,7 @@ int main(void)
     //uca0WriteString("Hello!\n");
     initI2C();
 
-
+    dmaConfig();
 
     maxim_max30102_reset();
     __delay_cycles(100);

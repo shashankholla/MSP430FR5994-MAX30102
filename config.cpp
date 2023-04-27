@@ -59,6 +59,16 @@ void disableUnwantedGPIO(void) {
     PEDIR = 0xFFFF;
 }
 
+void dmaConfig(void) {
+
+    DMA0CTL = 0;                                // disable DMA channel 0
+    DMACTL0 = DMA0TSEL_12;                      // select UCB0RXIFG0 dma trigger
+    DMA0CTL |= DMADSTINCR_3;                    // incremet dest. addr after dma
+    DMA0CTL |= (DMADSTBYTE + DMASRCBYTE);       // byte to byte transfer
+    DMA0SA = (__SFR_FARPTR) (unsigned long) &UCB0RXBUF;        // set DMA dest address register
+}
+
+
 void configClock (void)
 {
         WDTCTL = WDTPW | WDTHOLD; // stop watchdog timer

@@ -104,7 +104,7 @@ uint16_t check(void)
             bytesLeftToRead -= toGet;
 
             // Request toGet number of bytes from sensor
-            uint8_t readclear = UCB2RXBUF;
+            //uint8_t readclear = UCB2RXBUF;
 
             i2c_start(SLAVE_ADDR, WRITE);
             i2c_write(REG_FIFO_DATA);
@@ -112,33 +112,53 @@ uint16_t check(void)
             // i2c_start(SLAVE_ADDR,READ);
             i2c_repeated_start(SLAVE_ADDR, READ);
 
-            while (toGet > 0)
-            {
-                sense.head++;                                  // Advance the head of the storage struct
-                sense.head %= STORAGE_SIZE;                    // Wrap condition
-                sense.red[sense.head] = readThreeBytes(toGet); // Store this reading into the sense array
-                toGet -= 3;
-                if (activeLEDs > 1)
-                {
+            char allData[193];
+            P1IE  &= ~(BIT4);
+            getAllBytes(toGet, allData);
+            uint32_t tempLong = 0;
+            uint32_t un_temp;
 
-                    sense.IR[sense.head] = readThreeBytes(toGet);
-                    toGet -= 3;
-                }
 
-                if (activeLEDs > 2)
-                {
 
-                    sense.green[sense.head] = readThreeBytes(toGet);
-                    toGet -= 3;
-                }
+            for(int i = 0; i < 192; i++) {
+               sense.head++;                                  // Advance the head of the storage struct
+               sense.head %= STORAGE_SIZE;                    // Wrap condition
 
-                // toGet -= activeLEDs * 3;
+
+
+              un_temp = allData[i];
+              un_temp <<= 16;
+              tempLong += un_temp;
+
+              un_temp = allData[i+1];
+              un_temp <<= 8;
+              tempLong += un_temp;
+
+              un_temp = allData[i+2];
+              tempLong += un_temp;
+              tempLong &= 0x3FFFF;
+              sense.red[sense.head] = tempLong;
+
+                tempLong = 0;
+                uint32_t un_temp;
+                un_temp = allData[i+3];
+                un_temp <<= 16;
+                tempLong += un_temp;
+
+                un_temp = allData[i+4];
+                un_temp <<= 8;
+                tempLong += un_temp;
+
+                un_temp = allData[i+5];
+                tempLong += un_temp;
+                tempLong &= 0x3FFFF;
+                sense.IR[sense.head] = tempLong;
+
+                i+=6;
+
             }
-            while(UCB2CTLW0 & UCTXSTP);
-
-
     } // End readPtr != writePtr
-    
+    P1IE  |= BIT4;
     return (numberOfSamples); // Let the world know how much new data we found
 }
 
