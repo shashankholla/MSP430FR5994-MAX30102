@@ -15,7 +15,9 @@ uint8_t available(void);
 void nextSample(void);
 uint32_t getFIFOIR(void);
 uint32_t getFIFORed(void);
+
 uint16_t check(void);
+uint16_t check_interrupt_on_full(void);
 
 uint32_t getIR();
 uint32_t getRed();

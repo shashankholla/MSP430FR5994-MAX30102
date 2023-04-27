@@ -8,6 +8,8 @@
 #define ACTIVE_LEDS 2
 #define MULTI_LED_CONTROL 0x21
 
+#define INTERRUPT_ENABLE 0x80
+
 #define SLAVE_ADDR 0x57
 // register addresses
 #define REG_INTR_STATUS_1 0x00
@@ -142,6 +144,70 @@ uint16_t check(void)
     return (numberOfSamples); // Let the world know how much new data we found
 }
 
+
+uint16_t check_interrupt_on_full(void)
+{
+    // Read register FIDO_DATA in (3-uint8_t * number of active LED) chunks
+    // Until FIFO_RD_PTR = FIFO_WR_PTR
+
+
+    int numberOfSamples = 32;
+    int activeLEDs = ACTIVE_LEDS;
+    // Do we have new data?
+
+
+
+    // We now have the number of readings, now calc bytes to read
+    // For this example we are just doing Red and IR (3 bytes each)
+    int toGet = numberOfSamples * activeLEDs * 3;
+
+    // Get ready to read a burst of data from the FIFO register
+    // We may need to read as many as 288 bytes so we read in blocks no larger than I2C_BUFFER_LENGTH
+    // I2C_BUFFER_LENGTH changes based on the platform. 64 bytes for SAMD21, 32 bytes for Uno.
+    // Wire.requestFrom() is limited to BUFFER_LENGTH which is 32 on the Uno
+
+
+
+        // Request toGet number of bytes from sensor
+        uint8_t readclear = UCB2RXBUF;
+
+        i2c_start(SLAVE_ADDR, WRITE);
+        i2c_write(REG_FIFO_DATA);
+
+        // i2c_start(SLAVE_ADDR,READ);
+        i2c_repeated_start(SLAVE_ADDR, READ);
+
+        while (toGet > 0)
+        {
+            sense.head++;                                  // Advance the head of the storage struct
+            sense.head %= STORAGE_SIZE;                    // Wrap condition
+            sense.red[sense.head] = readThreeBytes(toGet); // Store this reading into the sense array
+            toGet -= 3;
+            if (activeLEDs > 1)
+            {
+
+                sense.IR[sense.head] = readThreeBytes(toGet);
+                toGet -= 3;
+            }
+
+            if (activeLEDs > 2)
+            {
+
+                sense.green[sense.head] = readThreeBytes(toGet);
+                toGet -= 3;
+            }
+
+
+        }
+        while(UCB2CTLW0 & UCTXSTP);
+
+
+
+
+    return (numberOfSamples); // Let the world know how much new data we found
+}
+
+
 bool safeCheck(uint8_t maxTimeToCheck)
 {
     uint32_t markTime = millis();
@@ -273,9 +339,9 @@ void maxim_max30102_init(void)
     };*/
 
     struct reg_write max30102_config[] = {
-        {REG_INTR_ENABLE_1, 0x40},
+        {REG_INTR_ENABLE_1, INTERRUPT_ENABLE},
         {REG_INTR_ENABLE_2, 0x00},
-        {REG_FIFO_CONFIG, 0x40}, // was 5F
+        {REG_FIFO_CONFIG, 0x51}, // was 5F
         {REG_MODE_CONFIG, MODE_CONFIG},
         {REG_SPO2_CONFIG, 0x24},
         {REG_LED1_PA, 0x3C}, //IR led
@@ -298,7 +364,7 @@ void maxim_max30102_init(void)
 void maxim_enable_interrupt(void) {
 //    writeRegister8(SLAVE_ADDR, 0x00, 0x00);
     volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
-    writeRegister8(SLAVE_ADDR, REG_INTR_ENABLE_1, 0x40);
+    writeRegister8(SLAVE_ADDR, REG_INTR_ENABLE_1, INTERRUPT_ENABLE);
   //  volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
 //    volatile uint8_t py = readRegister8(SLAVE_ADDR, 0x02);
 
