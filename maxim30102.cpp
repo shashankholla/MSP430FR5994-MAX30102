@@ -121,11 +121,6 @@ uint16_t check(void)
 
 
             for(int i = 0; i < 192; i++) {
-               sense.head++;                                  // Advance the head of the storage struct
-               sense.head %= STORAGE_SIZE;                    // Wrap condition
-
-
-
               un_temp = allData[i];
               un_temp <<= 16;
               tempLong += un_temp;
@@ -154,6 +149,8 @@ uint16_t check(void)
                 tempLong &= 0x3FFFF;
                 sense.IR[sense.head] = tempLong;
 
+            sense.head++;                                  // Advance the head of the storage struct
+               sense.head %= STORAGE_SIZE;
                 i+=6;
 
             }

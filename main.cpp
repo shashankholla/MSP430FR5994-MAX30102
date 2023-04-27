@@ -19,7 +19,7 @@ volatile int done = 0, done2 = 0;
 
 void testdelay();
 
-#define bufferLength 100
+#define bufferLength 96
 
 uint32_t irBuffer[bufferLength];  // infrared LED sensor data
 uint32_t redBuffer[bufferLength]; // red LED sensor data
@@ -65,6 +65,7 @@ int main(void)
 
     __bis_SR_register(GIE);
     maxim_max30102_init();
+
     __bis_SR_register(LPM0_bits);
 
     while(!done){

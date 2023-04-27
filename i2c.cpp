@@ -15,35 +15,35 @@ volatile unsigned int globalRxByteCtr = 0;
 volatile char globalReadBuf;
 
 void dummy_start(){
-int i =0;
-           P7OUT &= ~(BIT1 + BIT0);  // Set SCL and SDA pins to output low
-           P7DIR |= (BIT1 + BIT0);   // Set SCL and SDA pins to output mode
+    int i =0;
+    P7OUT &= ~(BIT1 + BIT0);  // Set SCL and SDA pins to output low
+    P7DIR |= (BIT1 + BIT0);   // Set SCL and SDA pins to output mode
 
-           P7SEL1 &= ~(BIT0 + BIT1);
-           P7SEL0 &= ~(BIT0 + BIT1);
+    P7SEL1 &= ~(BIT0 + BIT1);
+    P7SEL0 &= ~(BIT0 + BIT1);
 
 
-           // Toggle SCL signal 9 times while keeping SDA signal low
-           for (i = 0; i < 9; i++)
-           {
-               P7OUT &= ~BIT1;          // Set SCL pin low
-               __delay_cycles(100);        // Delay for a short time
-               P7OUT |= BIT1;           // Set SCL pin high
-               __delay_cycles(100);        // Delay for a short time
-           }
+    // Toggle SCL signal 9 times while keeping SDA signal low
+    for (i = 0; i < 9; i++)
+    {
+        P7OUT &= ~BIT1;          // Set SCL pin low
+        __delay_cycles(100);        // Delay for a short time
+        P7OUT |= BIT1;           // Set SCL pin high
+        __delay_cycles(100);        // Delay for a short time
+    }
 
-           // Send stop condition
-           P7OUT &= ~BIT0;              // Set SDA pin low
-           __delay_cycles(100);            // Delay for a short time
-           P7OUT |= BIT1;               // Set SCL pin high
-           __delay_cycles(100);            // Delay for a short time
-           P7OUT |= BIT0;               // Set SDA pin high
-           __delay_cycles(100);            // Delay for a short time
+    // Send stop condition
+    P7OUT &= ~BIT0;              // Set SDA pin low
+    __delay_cycles(100);            // Delay for a short time
+    P7OUT |= BIT1;               // Set SCL pin high
+    __delay_cycles(100);            // Delay for a short time
+    P7OUT |= BIT0;               // Set SDA pin high
+    __delay_cycles(100);            // Delay for a short time
 
-           // Set SDA and SCL pins back to I2C mode
-               P7DIR &= ~(BIT1 + BIT0);  // Set SCL and SDA pins to input mode
-               P7SEL0 |= (BIT1 + BIT0);  // Select I2C function for SCL and SDA pins
-               P7SEL1 &= ~(BIT1 + BIT0); // Select I2C function for SCL and SDA pins
+    // Set SDA and SCL pins back to I2C mode
+    P7DIR &= ~(BIT1 + BIT0);  // Set SCL and SDA pins to input mode
+    P7SEL0 |= (BIT1 + BIT0);  // Select I2C function for SCL and SDA pins
+    P7SEL1 &= ~(BIT1 + BIT0); // Select I2C function for SCL and SDA pins
 }
 
 void initI2C()
@@ -71,8 +71,8 @@ void initI2C()
     UCB2IE |= UCRXIE0 | UCNACKIE | UCCLTOIE;                                     // enable NACK ISR (TX and RX?)
 
 
-  while (UCB2STAT & UCBBUSY)
-      dummy_start();
+    while (UCB2STAT & UCBBUSY)
+        dummy_start();
 
 }
 
@@ -188,12 +188,12 @@ void i2c_read(uint8_t *led, unsigned int RxByteCtr)
 void i2c_read1byte(uint8_t *led)
 {
     while ((UCB2CTLW0 & UCTXSTT))
-                    ;
+        ;
     UCB2CTLW0 |= UCTXSTP; // stop
-        while (!(UCB2IFG & UCRXIFG0))
-            ; // make sure rx buffer got data
+    while (!(UCB2IFG & UCRXIFG0))
+        ; // make sure rx buffer got data
 
-        led[0] = UCB2RXBUF;
+    led[0] = UCB2RXBUF;
 
     while (UCB2CTLW0 & UCTXSTP)
         ; // wait for a stop to happen
@@ -212,33 +212,33 @@ void i2c_read2(uint8_t *led, unsigned int RxByteCtr, int toGet)
         {
             UCB2CTLW0 |= UCTXSTP; // stop
             while (!(UCB2IFG & UCRXIFG0))
-                                   ;
+                ;
 
 
         } else {
             while (!(UCB2IFG & UCRXIFG0))
-                        ;
+                ;
         }
 
         led[i] = UCB2RXBUF;
 
-//        for(int i=0;i<50;i++);
+        //        for(int i=0;i<50;i++);
 
     }
 
-//     while(UCB2CTLW0 & UCTXSTP);//wait for a stop to happen
+    //     while(UCB2CTLW0 & UCTXSTP);//wait for a stop to happen
 }
 
 void getAllBytes(unsigned int RxByteCtr, char* allData) {
 
-        dmaTransferDone = 0;
-        globalRxByteCtr = RxByteCtr;
-//        DMA0DA = (__SFR_FARPTR) (unsigned long) allData;
-        UCB2IE |= UCRXIE0; //enable rx int
-        __bis_SR_register(GIE);
+    dmaTransferDone = 0;
+    globalRxByteCtr = RxByteCtr;
+    DMA4DA = (__SFR_FARPTR) (unsigned long) allData;
+    UCB2IE |= UCRXIE0; //enable rx int
+    __bis_SR_register(GIE);
 
-        while(!dmaTransferDone);
-        UCB2IE &= ~(UCRXIE0); // disable rx int
+    while(!dmaTransferDone);
+    UCB2IE &= ~(UCRXIE0); // disable rx int
 
 }
 
@@ -248,70 +248,59 @@ void getAllBytes(unsigned int RxByteCtr, char* allData) {
 __interrupt void USCI_B0_ISR(void)
 {
 
-  switch(__even_in_range(UCB2IV, USCI_I2C_UCBIT9IFG))
-  {
-  case USCI_I2C_UCCLTOIFG:
-  {
-      dummy_start();
-      UCB2IFG &= ~(UCCLTOIFG);
-      break;
-  }
-  case USCI_I2C_UCRXIFG0:
-  {
-      DMA0CTL |= DMAEN;
+    switch(__even_in_range(UCB2IV, USCI_I2C_UCBIT9IFG))
+    {
+    case USCI_I2C_UCCLTOIFG:
+    {
+        dummy_start();
+        UCB2IFG &= ~(UCCLTOIFG);
+        break;
+    }
+    case USCI_I2C_UCRXIFG0:
+    {
+        DMA0CTL |= DMAEN;
 
-      if ((globalRxByteCtr == 1))
-             {
-                 dmaTransferDone = 1;
-                 UCB2CTLW0 |= UCTXSTP; // stop
-                 while (!(UCB2IFG & UCRXIFG0))
-                                        ;
-             }
+        if ((globalRxByteCtr == 1))
+        {
+            dmaTransferDone = 1;
+            UCB2CTLW0 |= UCTXSTP; // stop
+            while (!(UCB2IFG & UCRXIFG0))
+                ;
+        }
 
-      globalRxByteCtr--;
-      DMA0CTL |= DMAREQ;                  // Single block transfer
-      break;
-  }
+        globalRxByteCtr--;
+        DMA0CTL |= DMAREQ;                  // Single block transfer
+        break;
+    }
+    }
 }
-  }
 
 
 #pragma vector = USCI_B2_VECTOR
 __interrupt void USCI_B2_ISR(void)
 {
     switch(__even_in_range(UCB2IV, USCI_I2C_UCBIT9IFG))
-     {
-     case USCI_I2C_UCRXIFG0:
-     {
-//         DMA0CTL |= DMAEN;
-
-         globalRxByteCtr--;
-//         DMA0CTL |= DMAREQ;                  // Single block transfer
-         UCB2IFG = 0;
-
-         globalReadBuf = UCB2RXBUF;
-
-
-         if ((globalRxByteCtr == 1))
-                         {
-                             UCB2IE &= ~(UCRXIE0);
-                             dmaTransferDone = 1;
-                             UCB2CTLW0 |= UCTXSTP; // stop
-                             while (!(UCB2IFG & UCRXIFG0))
-                                                               ;
-                             globalReadBuf = UCB2RXBUF;
-
-                             while (UCB2CTLW0 & UCTXSTP)
-                                     ; // wait for stop
-
-                             UCB2IE &= ~(UCRXIE0);
-                         }
-
-
-
-
-         break;
-     }
-   }
+    {
+    case USCI_I2C_UCRXIFG0:
+    {
+        DMA4CTL |= DMAEN;
+        globalRxByteCtr--;
+        DMA4CTL |= DMAREQ;                  // Single block transfer
+        UCB2IFG = 0;
+        //         globalReadBuf = UCB2RXBUF;
+        if ((globalRxByteCtr == 1))
+        {
+            UCB2IE &= ~(UCRXIE0);
+            dmaTransferDone = 1;
+            UCB2CTLW0 |= UCTXSTP; // stop
+            while (!(UCB2IFG & UCRXIFG0));
+            //                             globalReadBuf = UCB2RXBUF;
+            DMA4CTL |= DMAREQ;
+            while (UCB2CTLW0 & UCTXSTP); // wait for stop
+            UCB2IE &= ~(UCRXIE0);
+        }
+        break;
+    }
+    }
 }
 
