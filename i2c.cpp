@@ -292,7 +292,7 @@ __interrupt void USCI_B2_ISR(void)
          globalReadBuf = UCB2RXBUF;
 
 
-         if ((globalRxByteCtr == 2))
+         if ((globalRxByteCtr == 1))
                          {
                              UCB2IE &= ~(UCRXIE0);
                              dmaTransferDone = 1;
