@@ -41,6 +41,7 @@ struct reg_write
     uint8_t data;
 };
 
+
 uint32_t readThreeBytes(int toGet)
 {
     uint8_t temp[3]; // Array of 4 bytes that we will convert into long
@@ -113,7 +114,7 @@ uint16_t check(void)
             i2c_repeated_start(SLAVE_ADDR, READ);
 
             char allData[193];
-            P1IE  &= ~(BIT4);
+
             getAllBytes(toGet, allData);
             uint32_t tempLong = 0;
             uint32_t un_temp;
@@ -350,4 +351,29 @@ void maxim_max30102_start(void)
     {
         writeRegister8(SLAVE_ADDR, max30102_config[i].addr, max30102_config[i].data);
     }
+}
+
+
+void dummyOneSampleRead() {
+    i2c_start(SLAVE_ADDR, WRITE);
+    i2c_write(REG_FIFO_DATA);
+
+    i2c_repeated_start(SLAVE_ADDR, READ);
+
+    char allData[6];
+
+    getAllBytes(1, allData);
+    uint32_t tempLong = 0;
+    uint32_t un_temp;
+
+    struct reg_write max30102_config[] = {
+           {REG_FIFO_WR_PTR, 0x00},
+           {REG_OVF_COUNTER, 0x00},
+           {REG_FIFO_RD_PTR, 0x00},
+       };
+
+   for (int i = 0; i < sizeof(max30102_config) / sizeof(max30102_config[0]); i++)
+   {
+       writeRegister8(SLAVE_ADDR, max30102_config[i].addr, max30102_config[i].data);
+   }
 }

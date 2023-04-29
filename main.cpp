@@ -63,7 +63,7 @@ int main(void)
     maxim_max30102_reset();
     __delay_cycles(100);
 
-    __bis_SR_register(GIE);
+
     maxim_max30102_init();
 
    // uint8_t readPointer = getReadPointer();
@@ -71,12 +71,13 @@ int main(void)
     //uint8_t writePointer = getWritePointer();
 
     check();
-    P1IE  |= BIT4;
+
 
     sense.head = 0;
     sense.tail = 0;
 
-    __bis_SR_register(LPM0_bits);
+    P1IE  |= BIT4;
+    __bis_SR_register(LPM0_bits|GIE);
 
     while(!done){
         check();
@@ -88,27 +89,26 @@ int main(void)
                    if(zz == bufferLength)break;
                }
 
-
-
            done2 = 0;
-
+           P1IE  |= BIT4;
+           maxim_enable_interrupt();
         if(zz >= bufferLength) {
             done = 1;
             done2 = 1;
             __bic_SR_register(GIE);
         } else {
-            __bis_SR_register(GIE);
+
+            __bis_SR_register(LPM0_bits|GIE);
         }
 
-        maxim_enable_interrupt();
-        P1IE  |= BIT4;
+
         while(!done2);
 
     }
     maxim_max30102_shutdown();
     maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
     P1OUT |= BIT2;
-    __bis_SR_register(LPM0_bits);
+    __bis_SR_register(LPM4_bits);
 
     while (1)
     {
@@ -392,7 +392,9 @@ void testdelay()
 __interrupt void Port_1(void) {
 
 //P1OUT = BIT0;
+P1IE  &= ~(BIT4);
 P1IFG &= ~BIT4;
+
 done2 = 1;
 
 __bic_SR_register_on_exit(LPM0_bits|GIE);
