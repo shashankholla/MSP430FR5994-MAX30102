@@ -120,7 +120,7 @@ uint16_t check(void)
 
 
 
-            for(int i = 0; i < 192; i++) {
+            for(int i = 0; i < 192;) {
               un_temp = allData[i];
               un_temp <<= 16;
               tempLong += un_temp;
@@ -149,13 +149,13 @@ uint16_t check(void)
                 tempLong &= 0x3FFFF;
                 sense.IR[sense.head] = tempLong;
 
-            sense.head++;                                  // Advance the head of the storage struct
+               sense.head++;                                  // Advance the head of the storage struct
                sense.head %= STORAGE_SIZE;
                 i+=6;
 
             }
     } // End readPtr != writePtr
-    P1IE  |= BIT4;
+
     return (numberOfSamples); // Let the world know how much new data we found
 }
 
@@ -290,7 +290,7 @@ void maxim_max30102_init(void)
     };*/
 
     struct reg_write max30102_config[] = {
-        {REG_INTR_ENABLE_1, 0x40},
+        {REG_INTR_ENABLE_1, 0x80},
         {REG_INTR_ENABLE_2, 0x00},
         {REG_FIFO_CONFIG, 0x40}, // was 5F
         {REG_MODE_CONFIG, MODE_CONFIG},
@@ -315,7 +315,7 @@ void maxim_max30102_init(void)
 void maxim_enable_interrupt(void) {
 //    writeRegister8(SLAVE_ADDR, 0x00, 0x00);
     volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
-    writeRegister8(SLAVE_ADDR, REG_INTR_ENABLE_1, 0x40);
+    writeRegister8(SLAVE_ADDR, REG_INTR_ENABLE_1, 0x80);
   //  volatile uint8_t px = readRegister8(SLAVE_ADDR, 0x00);
 //    volatile uint8_t py = readRegister8(SLAVE_ADDR, 0x02);
 

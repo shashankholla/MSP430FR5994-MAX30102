@@ -66,6 +66,16 @@ int main(void)
     __bis_SR_register(GIE);
     maxim_max30102_init();
 
+   // uint8_t readPointer = getReadPointer();
+
+    //uint8_t writePointer = getWritePointer();
+
+    check();
+    P1IE  |= BIT4;
+
+    sense.head = 0;
+    sense.tail = 0;
+
     __bis_SR_register(LPM0_bits);
 
     while(!done){
@@ -79,10 +89,10 @@ int main(void)
                }
 
 
-           maxim_enable_interrupt();
+
            done2 = 0;
 
-        if(zz == bufferLength) {
+        if(zz >= bufferLength) {
             done = 1;
             done2 = 1;
             __bic_SR_register(GIE);
@@ -90,6 +100,8 @@ int main(void)
             __bis_SR_register(GIE);
         }
 
+        maxim_enable_interrupt();
+        P1IE  |= BIT4;
         while(!done2);
 
     }
