@@ -62,7 +62,7 @@ void disableUnwantedGPIO(void) {
 void dmaConfig(void) {
 
     DMA4CTL = 0;                                // disable DMA channel 0
-    DMACTL4 = DMA4TSEL_0;                      // select UCB0RXIFG0 dma trigger
+    DMACTL4 = DMA4TSEL_18;                      // select UCB0RXIFG0 dma trigger
     DMA4CTL |= DMADSTINCR_3;                    // incremet dest. addr after dma
     DMA4CTL |= (DMADSTBYTE + DMASRCBYTE);       // byte to byte transfer
     DMA4SA = (__SFR_FARPTR) (unsigned long) &UCB2RXBUF;        // set DMA dest address register

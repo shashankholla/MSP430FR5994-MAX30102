@@ -35,6 +35,9 @@
 
 #define I2C_BUFFER_LENGTH 192
 
+volatile bool dmaDone = 0;
+
+static char allData[193];
 struct reg_write
 {
     uint8_t addr;
@@ -72,10 +75,15 @@ uint16_t check(void)
 
     uint8_t writePointer = getWritePointer();
 
+    uint16_t toGet;
+
     int numberOfSamples = 0;
     int activeLEDs = ACTIVE_LEDS;
     // Do we have new data?
-    if(readPointer == writePointer) writePointer = 32;
+    if(readPointer == writePointer){
+        writePointer = 32;
+        readPointer = 0;
+    }
     if (readPointer != writePointer)
     {
         // Calculate the number of readings we need to get from sensor
@@ -92,7 +100,7 @@ uint16_t check(void)
         // I2C_BUFFER_LENGTH changes based on the platform. 64 bytes for SAMD21, 32 bytes for Uno.
         // Wire.requestFrom() is limited to BUFFER_LENGTH which is 32 on the Uno
 
-            int toGet = bytesLeftToRead;
+           toGet = bytesLeftToRead;
             if (toGet > I2C_BUFFER_LENGTH)
             {
                 // If toGet is 32 this is bad because we read 6 bytes (Red+IR * 3 = 6) at a time
@@ -107,21 +115,38 @@ uint16_t check(void)
             // Request toGet number of bytes from sensor
             //uint8_t readclear = UCB2RXBUF;
 
+            UCB2CTLW0 |= UCSWRST;
+            UCB2CTLW1 = UCASTP_2;
+            UCB2CTLW0 &= ~(UCTXSTP);
+            UCB2TBCNT = toGet;
+            UCB2CTLW0 |= UCMODE_3 | UCMST | UCSSEL__SMCLK | UCSYNC; // I2C master mode, SMCLK
+            UCB2BRW = 19;                                           // 3;//10;                            // fSCL = SMCLK/10 = ~100kHz
+            UCB2I2CSA = SLAVE_ADDR;                                 // Slave Address
+            UCB2CTLW0 &= ~UCSWRST;
+
+            __bis_SR_register(GIE);
+            DMA4CTL &=~DMAEN;
+            DMA4CTL |=DMADT_4|DMADSTINCR_3|DMASRCINCR_0|DMASRCBYTE__BYTE|DMADSTBYTE__BYTE|DMALEVEL__EDGE|DMAIE;
+            DMACTL2    |= DMA4TSEL__UCB2RXIFG0;
+            DMA4SZ     = toGet;
+            DMA4DA = (__SFR_FARPTR) (unsigned long) allData;
+            DMA4CTL |= DMAEN;
+
+            dmaDone = 0;
             i2c_start(SLAVE_ADDR, WRITE);
             i2c_write(REG_FIFO_DATA);
-
-            // i2c_start(SLAVE_ADDR,READ);
             i2c_repeated_start(SLAVE_ADDR, READ);
 
-            char allData[193];
 
-            getAllBytes(toGet, allData);
+            while(!dmaDone);
+            DMA4CTL &=~DMAEN;
+            //getAllBytes(toGet, allData);
             uint32_t tempLong = 0;
             uint32_t un_temp;
 
 
 
-            for(int i = 0; i < 192;) {
+            for(int i = 0; i < toGet;) {
               un_temp = allData[i];
               un_temp <<= 16;
               tempLong += un_temp;
@@ -157,7 +182,7 @@ uint16_t check(void)
             }
     } // End readPtr != writePtr
 
-    return (numberOfSamples); // Let the world know how much new data we found
+    return (toGet); // Let the world know how much new data we found
 }
 
 bool safeCheck(uint8_t maxTimeToCheck)
@@ -377,3 +402,14 @@ void dummyOneSampleRead() {
        writeRegister8(SLAVE_ADDR, max30102_config[i].addr, max30102_config[i].data);
    }
 }
+
+
+// DMA interrupt service routine
+#pragma vector=DMA_VECTOR
+__interrupt void dma (void)
+{
+  DMA4CTL &= ~DMAIFG;
+  dmaDone = 1;
+
+}
+

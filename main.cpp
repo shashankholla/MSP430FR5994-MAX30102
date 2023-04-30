@@ -70,8 +70,15 @@ int main(void)
 
     //uint8_t writePointer = getWritePointer();
 
-    check();
-
+    P1IE  &= ~(BIT4);
+    int x = check();
+    while(available() && zz < bufferLength) {
+                       redBuffer[zz] = getFIFORed();
+                       irBuffer[zz] = getFIFOIR();
+                       nextSample();
+                       zz++;
+                       if(zz == bufferLength)break;
+                   }
 
     sense.head = 0;
     sense.tail = 0;
@@ -80,6 +87,8 @@ int main(void)
     __bis_SR_register(LPM0_bits|GIE);
 
     while(!done){
+        P1IE  &= ~(BIT4);
+        initI2C();
         check();
         while(available() && zz < bufferLength) {
                    redBuffer[zz] = getFIFORed();

@@ -63,12 +63,12 @@ void initI2C()
 
     UCB2CTLW0 |= UCSWRST;                                   // Enable SW reset
     UCB2CTLW0 &= ~(UCTXSTP);
-
+    UCB2CTLW1 = 0;
     UCB2CTLW0 |= UCMODE_3 | UCMST | UCSSEL__SMCLK | UCSYNC; // I2C master mode, SMCLK
     UCB2BRW = 19;                                           // 3;//10;                            // fSCL = SMCLK/10 = ~100kHz
     UCB2I2CSA = SLAVE_ADDR;                                 // Slave Address
     UCB2CTLW0 &= ~UCSWRST;                                  // Clear SW reset, resume operation
-    UCB2IE |= UCRXIE0 | UCNACKIE | UCCLTOIE;                                     // enable NACK ISR (TX and RX?)
+    UCB2IE |=  UCNACKIE | UCCLTOIE;                                     // enable NACK ISR (TX and RX?)
 
 
     while (UCB2STAT & UCBBUSY)
