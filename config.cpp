@@ -10,17 +10,12 @@ void disableUnwantedGPIO(void) {
     
     P1OUT = 0;
     P1DIR = 0xFF;
+    //Timer test pin
+    P1OUT &= ~(BIT4);
+    P1DIR |= (BIT4);
 
-    P1OUT &= ~(BIT2);
-    P1DIR |= (BIT2);
-
-    P1DIR &= ~(BIT4);
-    P1OUT |= BIT4;
-    P1REN |= BIT4;
-    P1IE  |= BIT4;
-    P1IES |= BIT4;
-    P1IFG &= ~BIT4;  
-    
+    P1SEL1 |= BIT2;                         // Configure P1.2 for ADC
+    P1SEL0 |= BIT2;
     
     P2OUT = 0;
     P2DIR = 0xFF;
@@ -94,7 +89,7 @@ void configClock (void)
 void initTMR (void)
 {
     //Init Timer0 for delay
-            TA0CTL |= (MC__CONTINOUS | TASSEL_2 | ID_3);
+//            TA0CTL |= (MC__CONTINOUS | TASSEL_2 | ID_3);
 
             //Init Timer3 for millis()
             TA3CTL = 0;
@@ -102,11 +97,11 @@ void initTMR (void)
                 BIT_SET(TA3CTL, TACLR);
                 // Turn the timer off
                 BIT_CLEAR(TA3CTL, MC_3);
-                // Set the clock source to SMCLK (1MHz)
+                // Set the clock source to SMCLK (8MHz)
                 BIT_SET(TA3CTL, TASSEL_2);
                 // Set divider to 1
                 BIT_SET(TA3CTL, ID_3);
-                // Turn of capture mode
+                // Turn off capture mode
                 BIT_CLEAR(TA3CCTL0, CM);
                 // Enable compare mode
                 BIT_CLEAR(TA3CCTL0, CAP);
@@ -114,7 +109,7 @@ void initTMR (void)
                 // 1_000_000 hz / 1000 = 1000 ticks per ms
                 TA3CCR0 = 1000;
                 // Enable interrupt when reaching CCR0 value
-                //BIT_SET(TA3CCTL0, CCIE);
+                BIT_SET(TA3CCTL0, CCIE);
                 // Clean interrupt flag, if any
                 BIT_CLEAR(TA3CCTL0, CCIFG);
                 // Start the timer in UP mode

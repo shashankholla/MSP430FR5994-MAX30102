@@ -34,34 +34,34 @@ print("Exited Loop")
 
 # looping through data vector and removing bad data
 # then, create vectors for time, red, and IR variables
-t_vec,ir_vec,red_vec = [],[],[]
+t_vec,ir_vec,hr_vec = [],[],[]
 ir_prev,red_prev = 0.0,0.0
-for ii in range(3,len(all_data)):
+for ii in range(len(all_data)):
     try:
         curr_data = (all_data[ii][0:-2]).decode("utf-8").split(',')
     except:
         continue
     
-    if len(curr_data)==3:
+    if len(curr_data)>1:
 
         if abs((float(curr_data[1])-ir_prev)/float(curr_data[1]))>1.01:
             continue
         
-        t_vec.append(float(curr_data[0])/1000000.0)
+        t_vec.append(float(curr_data[0]))
         ir_vec.append(float(curr_data[1]))
-        red_vec.append(float(curr_data[2]))
+        hr_vec.append(float(curr_data[2]))
         ir_prev = float(curr_data[1])
-        red_prev = float(curr_data[2])
-
 print('Sample Rate: {0:2.1f}Hz'.format(1.0/np.mean(np.abs(np.diff(t_vec)))))
 
 ## saving data
 with open(datafile_name,'a') as f:
     writer = csv.writer(f,delimiter=',')
-    for t,x,y in zip(t_vec,ir_vec,red_vec):
-        writer.writerow([t,x,y])
+    for t,x in zip(t_vec,ir_vec):
+        writer.writerow([t,x])
         
 ## plotting data vectors 
+plt.xlim([t_vec[0], t_vec[-1]])
+print([t_vec[0], t_vec[-1]])
 fig = plt.figure(figsize=(12,8))
 ax1 = fig.add_subplot(111)
 ax1.set_xlabel('Time [s]',fontsize=24)
@@ -72,10 +72,10 @@ ax1_2 = plt.twinx()
 ax1_2.grid('off')
 ax1_2.set_ylabel('Red Amplitude',fontsize=24,color='#37A490',labelpad=10)
 ax1_2.tick_params(axis='y',which='major',labelsize=16)
-plt2 = ax1_2.plot(t_vec,red_vec,label='Red',color='#37A490',linewidth=4)
+plt2 = ax1_2.plot(t_vec,hr_vec,label='Red',color='#37A490',linewidth=4)
 lns = plt1+plt2
 labels = [l.get_label() for l in lns]
-ax1_2.legend(lns,labels,fontsize=16)
+ax1.legend(lns,labels,fontsize=16)
 plt.xlim([t_vec[0],t_vec[-1]])
 plt.tight_layout(pad=1.2)
 plt.savefig('max30102_python_example.png',dpi=300,facecolor=[252/255,252/255,252/255])

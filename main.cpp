@@ -8,403 +8,128 @@
 #include "algorithm.h"
 #include "heartRate.h"
 
-static volatile uint32_t TIMER_MS_COUNT = 0;
-volatile uint32_t x;
-#define BIT_SET(x, y) x |= (y)
-#define BIT_CLEAR(x, y) x &= ~(y)
-char string[100];
-long last = 0;
-volatile int zz = 0;
-volatile int done = 0, done2 = 0;
+volatile int adcReading = 0;
 
-void testdelay();
-
-#define bufferLength 96
-
-uint32_t irBuffer[bufferLength];  // infrared LED sensor data
-uint32_t redBuffer[bufferLength]; // red LED sensor data
-
-float spo2;            // SPO2 value
-int8_t validSPO2;      // indicator to show if the SPO2 calculation is valid
-int32_t heartRate;     // heart rate value
-int8_t validHeartRate; // indicator to show if the heart rate calculation is valid
-bool onlyheartrate = 0;
-bool diasyscalc_en = 1;
-int32_t sys, dia;
-#define RATE_SIZE 8                 // Increase this for more averaging. 4 is good.
-uint8_t heartRateAvgArr[RATE_SIZE]; // Array of heart rates
-uint8_t heartRateSpot = 0;
-
-uint8_t spo2RateAvgArr[RATE_SIZE];
-uint8_t spo2Spot = 0;
-long lastBeat = 0; // Time at which the last beat occurred
+const char RATE_SIZE = 4; //Increase this for more averaging. 4 is good.
+char rates[RATE_SIZE]; //Array of heart rates
+char rateSpot = 0;
+long lastBeat = 0; //Time at which the last beat occurred
 
 float beatsPerMinute;
-int heartRateAvg = 90, spo2Avg = 95;
-int update = 0;
-uint32_t irValue, redValue;
-unsigned int i;
+int beatAvg;
+
+void testdelay();
+char string[40];
+
 
 int main(void)
 {
 
     configClock();
     disableUnwantedGPIO();
-
     initTMR();
 
-    //uca0Init();
+//      uca0Init();
 
-    //uca0WriteString("Hello!\n");
-    initI2C();
-
-    dmaConfig();
-
-    maxim_max30102_reset();
-    __delay_cycles(100);
-
-
-    maxim_max30102_init();
-
-   // uint8_t readPointer = getReadPointer();
-
-    //uint8_t writePointer = getWritePointer();
-
-    P1IE  &= ~(BIT4);
-    int x = check();
-    while(available() && zz < bufferLength) {
-                       redBuffer[zz] = getFIFORed();
-                       irBuffer[zz] = getFIFOIR();
-                       nextSample();
-                       zz++;
-                       if(zz == bufferLength)break;
-                   }
-
-    sense.head = 0;
-    sense.tail = 0;
-
-    P1IE  |= BIT4;
-    __bis_SR_register(LPM0_bits|GIE);
-
-    while(!done){
-        P1IE  &= ~(BIT4);
-        initI2C();
-        check();
-        while(available() && zz < bufferLength) {
-                   redBuffer[zz] = getFIFORed();
-                   irBuffer[zz] = getFIFOIR();
-                   nextSample();
-                   zz++;
-                   if(zz == bufferLength)break;
-               }
-
-           done2 = 0;
-           P1IE  |= BIT4;
-           maxim_enable_interrupt();
-        if(zz >= bufferLength) {
-            done = 1;
-            done2 = 1;
-            __bic_SR_register(GIE);
-        } else {
-
-            __bis_SR_register(LPM0_bits|GIE);
-        }
-
-
-        while(!done2);
-
-    }
-    maxim_max30102_shutdown();
-    maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
-    P1OUT |= BIT2;
-    __bis_SR_register(LPM4_bits);
-
-    while (1)
-    {
-        for (i = 0; i < bufferLength; i++)
-        {
-            while (available() == false) // do we have new data?
-                check();                 // Check the sensor for new data
-
-            redBuffer[i] = getFIFORed();
-            irBuffer[i] = getFIFOIR();
-            nextSample();
-        }
-        //        uint32_t irBuffer2[100] = {
-        //                               226743,
-        //                               226709,
-        //                               226528,
-        //                               226583,
-        //                               226514,
-        //                               226514,
-        //                               226534,
-        //                               226576,
-        //                               226581,
-        //                               226627,
-        //                               226606,
-        //                               226583,
-        //                               226640,
-        //                               226717,
-        //                               226591,
-        //                               226590,
-        //                               226677,
-        //                               226754,
-        //                               226649,
-        //                               226616,
-        //                               226724,
-        //                               226670,
-        //                               226457,
-        //                               226395,
-        //                               226457,
-        //                               226537,
-        //                               226481,
-        //                               226452,
-        //                               226555,
-        //                               226532,
-        //                               226515,
-        //                               226471,
-        //                               226545,
-        //                               226580,
-        //                               226468,
-        //                               226501,
-        //                               226533,
-        //                               226498,
-        //                               226531,
-        //                               226547,
-        //                               226503,
-        //                               226398,
-        //                               226357,
-        //                               226352,
-        //                               226349,
-        //                               226315,
-        //                               226440,
-        //                               226453,
-        //                               226397,
-        //                               226374,
-        //                               226462,
-        //                               226417,
-        //                               226358,
-        //                               226434,
-        //                               226470,
-        //                               226409,
-        //                               226450,
-        //                               226480,
-        //                               226420,
-        //                               226429,
-        //                               226516,
-        //                               226284,
-        //                               226324,
-        //                               226366,
-        //                               226313,
-        //                               226328,
-        //                               226471,
-        //                               226459,
-        //                               226379,
-        //                               226447,
-        //                               226359,
-        //                               226280,
-        //                               226421,
-        //                               226332,
-        //                               226451,
-        //                               226538,
-        //                               226500,
-        //                               226504,
-        //                               226612,
-        //                               226523,
-        //                               226467,
-        //                               226495,
-        //                               226441,
-        //                               226450,
-        //                               226511,
-        //                               226498,
-        //                               226590,
-        //                               226597,
-        //                               226591,
-        //                               226684,
-        //                               226764,
-        //                               226754,
-        //                               226739,
-        //                               226812,
-        //                               226663,
-        //                               226653,
-        //                               226727,
-        //                               226529,
-        //                               226652,
-        //                               226797
-        //        };
-
-        //    maxim_max30102_shutdown();
-        maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
-        sprintf(string, "beatAvg=%ld spo2Avg=%f ", heartRate, spo2);
-        uca0WriteString(string);
-    }
-
-    P1OUT = BIT0;
-
-//    __bis_SR_register(LPM3_bits | GIE);
-
-    PMMCTL0_H = PMMPW_H;    // open PMM
-    PMMCTL0_L |= PMMREGOFF; // set Flag to enter LPM4.5 with LPM4 request
-    __bis_SR_register(LPM4_bits | GIE);
-    __no_operation();
-
-    while (1)
-    {
-        update = 0;
-
-        for (i = 25; i < bufferLength; i++)
-        {
-            update = 0;
-
-            for (i = 25; i < bufferLength; i++)
+        ADC12CTL0 = ADC12SHT0_2 | ADC12ON;      // Sampling time, S&H=16, ADC12 on
+        ADC12CTL1 = ADC12SHP;                   // Use sampling timer
+        ADC12CTL2 |= ADC12RES_2;                // 12-bit conversion results
+        ADC12MCTL0 |= ADC12VRSEL_0 | ADC12INCH_2;              // A1 ADC input select; Vref=AVCC
+        ADC12IER0 |= ADC12IE0;                  // Enable ADC conv complete interrupt
+        P1OUT &= ~(BIT4);
+        while (1)
             {
-                redBuffer[i - 25] = redBuffer[i];
-                irBuffer[i - 25] = irBuffer[i];
-            }
+                __delay_cycles(5000);
+                ADC12CTL0 |= ADC12ENC | ADC12SC;    // Start sampling/conversion
 
-            for (i = 76; i < bufferLength; i++)
-            {
-                while (available() == false) // do we have new data?
-                    check();                 // Check the sensor for new data
+                __bis_SR_register(LPM0_bits | GIE); // LPM0, ADC12_ISR will force exit
+                __no_operation();                   // For debugger
 
-                redBuffer[i] = getFIFOIR();
-                irBuffer[i] = getFIFORed();
+                if (checkForBeat(adcReading))
+                  {
+                    //We sensed a beat!
+                    long delta = millis() - lastBeat;
+                    lastBeat = millis();
 
-                nextSample();
-                //                     if (checkForBeat(irValue) == true)
-                //                            {
-                //                         if(lastBeat == -1) {
-                //                             lastBeat = millis();
-                //
-                //                         } else{
-                //                                // We sensed a beat!
-                //                                long delta = millis() - lastBeat;
-                //                                lastBeat = millis();
-                //
-                //                                beatsPerMinute = 60 / (delta / 1000.0);
-                //
-                //                                if (beatsPerMinute < 255 && beatsPerMinute > 20)
-                //                                {
-                //                                    heartRateAvgArr[heartRateSpot++] = (uint8_t)heartRate; // Store this reading in the array
-                //                                    heartRateSpot %= RATE_SIZE;                    // Wrap variable
-                //
-                //                                    // Take average of readings
-                //                                    heartRateAvg = 0;
-                //                                    for (uint8_t x = 0; x < RATE_SIZE; x++)
-                //                                        heartRateAvg += heartRateAvgArr[x];
-                //                                    heartRateAvg /= RATE_SIZE;
-                //                                }
-                //                            }
-                //                            }
-            }
+                    beatsPerMinute = 60 / (delta / 1000.0);
 
-            //           maxim_max30102_shutdown();
-
-            lastBeat = -1;
-            irValue = irBuffer[99];
-            redValue = redBuffer[99];
-
-            maxim_heart_rate_and_oxygen_saturation(irBuffer, bufferLength, redBuffer, &spo2, &validSPO2, &heartRate, &validHeartRate, &sys, &dia, onlyheartrate, diasyscalc_en);
-
-            float diff = (heartRate - heartRateAvg) / float(heartRate);
-            diff = diff < 0 ? -diff : diff;
-
-            if (validHeartRate)
-            {
-                update = 1;
-                heartRateAvgArr[heartRateSpot++] = heartRate;
-                heartRateSpot %= RATE_SIZE;
-                int i;
-                heartRateAvg = 0;
-                int avgct = 0;
-                for (i = 0; i < RATE_SIZE; i++)
-                {
-                    if (heartRateAvgArr[i] > 0)
+                    if (1)
                     {
-                        avgct++;
-                        heartRateAvg += heartRateAvgArr[i];
+                      rates[rateSpot++] = (char)beatsPerMinute; //Store this reading in the array
+                      rateSpot %= RATE_SIZE; //Wrap variable
+
+                      //Take average of readings
+                      beatAvg = 0;
+                      for (char x = 0 ; x < RATE_SIZE ; x++)
+                        beatAvg += rates[x];
+                      beatAvg /= RATE_SIZE;
                     }
-                }
-                heartRateAvg = heartRateAvg / avgct;
+                  }
+
+                 //sprintf(string, "%ld, %d, %d", millis(), adcReading, beatAvg);
+//                 uca0WriteString(string);
             }
 
-            diff = (spo2 - spo2Avg) / float(spo2);
-            diff = diff < 0 ? -diff : diff;
-            if (validSPO2)
-            {
-                update = 1;
-                spo2RateAvgArr[spo2Spot++] = spo2;
-                spo2Spot %= RATE_SIZE;
-                int i;
-                spo2Avg = 0;
-                int avgct = 0;
-                for (i = 0; i < RATE_SIZE; i++)
-                {
-                    if (spo2RateAvgArr[i] > 0)
-                    {
-                        spo2Avg += spo2RateAvgArr[i];
-                        avgct++;
-                    }
-                }
-                spo2Avg = spo2Avg / avgct;
-            }
 
-            if (1)
-            {
-                //    sprintf(string, "\rIR= %lu Red=%lu beatAvg=%lu spo2Avg=%lu update=%d sys=%lu, dia=%lu", irValue, redValue, heartRate, spo2, update, sys, dia);
-                sprintf(string, "beatAvg=%ld spo2Avg=%ld ", heartRate, spo2);
-                uca0WriteString(string);
-            }
-            if (irValue < 50000)
-            {
-                uca0WriteString("\rNo finger?");
-                // resetHeartRate();
-            }
-        }
-    }
+
+
 }
 
-void testuart()
+
+#if defined(__TI_COMPILER_VERSION__) || defined(__IAR_SYSTEMS_ICC__)
+#pragma vector = ADC12_B_VECTOR
+__interrupt void ADC12_ISR(void)
+#elif defined(__GNUC__)
+void __attribute__ ((interrupt(ADC12_B_VECTOR))) ADC12_ISR (void)
+#else
+#error Compiler not supported!
+#endif
 {
-    while (1)
+    switch(__even_in_range(ADC12IV, ADC12IV__ADC12RDYIFG))
     {
-        uca0WriteString("Hello from MSP430FR5994");
-        delay(100);
+        case ADC12IV__NONE:        break;   // Vector  0:  No interrupt
+        case ADC12IV__ADC12OVIFG:  break;   // Vector  2:  ADC12MEMx Overflow
+        case ADC12IV__ADC12TOVIFG: break;   // Vector  4:  Conversion time overflow
+        case ADC12IV__ADC12HIIFG:  break;   // Vector  6:  ADC12BHI
+        case ADC12IV__ADC12LOIFG:  break;   // Vector  8:  ADC12BLO
+        case ADC12IV__ADC12INIFG:  break;   // Vector 10:  ADC12BIN
+        case ADC12IV__ADC12IFG0:            // Vector 12:  ADC12MEM0 Interrupt
+            adcReading = ADC12MEM0;
+            __bic_SR_register_on_exit(LPM0_bits);
+            break;
+        case ADC12IV__ADC12IFG1:   break;   // Vector 14:  ADC12MEM1
+        case ADC12IV__ADC12IFG2:   break;   // Vector 16:  ADC12MEM2
+        case ADC12IV__ADC12IFG3:   break;   // Vector 18:  ADC12MEM3
+        case ADC12IV__ADC12IFG4:   break;   // Vector 20:  ADC12MEM4
+        case ADC12IV__ADC12IFG5:   break;   // Vector 22:  ADC12MEM5
+        case ADC12IV__ADC12IFG6:   break;   // Vector 24:  ADC12MEM6
+        case ADC12IV__ADC12IFG7:   break;   // Vector 26:  ADC12MEM7
+        case ADC12IV__ADC12IFG8:   break;   // Vector 28:  ADC12MEM8
+        case ADC12IV__ADC12IFG9:   break;   // Vector 30:  ADC12MEM9
+        case ADC12IV__ADC12IFG10:  break;   // Vector 32:  ADC12MEM10
+        case ADC12IV__ADC12IFG11:  break;   // Vector 34:  ADC12MEM11
+        case ADC12IV__ADC12IFG12:  break;   // Vector 36:  ADC12MEM12
+        case ADC12IV__ADC12IFG13:  break;   // Vector 38:  ADC12MEM13
+        case ADC12IV__ADC12IFG14:  break;   // Vector 40:  ADC12MEM14
+        case ADC12IV__ADC12IFG15:  break;   // Vector 42:  ADC12MEM15
+        case ADC12IV__ADC12IFG16:  break;   // Vector 44:  ADC12MEM16
+        case ADC12IV__ADC12IFG17:  break;   // Vector 46:  ADC12MEM17
+        case ADC12IV__ADC12IFG18:  break;   // Vector 48:  ADC12MEM18
+        case ADC12IV__ADC12IFG19:  break;   // Vector 50:  ADC12MEM19
+        case ADC12IV__ADC12IFG20:  break;   // Vector 52:  ADC12MEM20
+        case ADC12IV__ADC12IFG21:  break;   // Vector 54:  ADC12MEM21
+        case ADC12IV__ADC12IFG22:  break;   // Vector 56:  ADC12MEM22
+        case ADC12IV__ADC12IFG23:  break;   // Vector 58:  ADC12MEM23
+        case ADC12IV__ADC12IFG24:  break;   // Vector 60:  ADC12MEM24
+        case ADC12IV__ADC12IFG25:  break;   // Vector 62:  ADC12MEM25
+        case ADC12IV__ADC12IFG26:  break;   // Vector 64:  ADC12MEM26
+        case ADC12IV__ADC12IFG27:  break;   // Vector 66:  ADC12MEM27
+        case ADC12IV__ADC12IFG28:  break;   // Vector 68:  ADC12MEM28
+        case ADC12IV__ADC12IFG29:  break;   // Vector 70:  ADC12MEM29
+        case ADC12IV__ADC12IFG30:  break;   // Vector 72:  ADC12MEM30
+        case ADC12IV__ADC12IFG31:  break;   // Vector 74:  ADC12MEM31
+        case ADC12IV__ADC12RDYIFG: break;   // Vector 76:  ADC12RDY
+        default: break;
     }
 }
 
-void testmillis()
-{
-    long delta = 0;
-
-    while (1)
-    {
-        if (millis() - last > 1000)
-        {
-            last = millis();
-            P1OUT ^= BIT4;
-        }
-    }
-}
-
-//
-void testdelay()
-{
-    while (1)
-    {
-        delay(250);
-        P1OUT ^= BIT0;
-    }
-}
-
-#pragma vector=PORT1_VECTOR
-__interrupt void Port_1(void) {
-
-//P1OUT = BIT0;
-P1IE  &= ~(BIT4);
-P1IFG &= ~BIT4;
-
-done2 = 1;
-
-__bic_SR_register_on_exit(LPM0_bits|GIE);
-}
