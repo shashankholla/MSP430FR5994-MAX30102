@@ -16,6 +16,7 @@ void disableUnwantedGPIO(void) {
     P1DIR |= (BIT5);
 
 
+
     P1OUT &= ~(BIT4);
     P1DIR |= (BIT4);
 
@@ -27,6 +28,10 @@ void disableUnwantedGPIO(void) {
 
     P3OUT = 0;
     P3DIR = 0xFF;
+
+    P3OUT &= ~(BIT0);
+    P3DIR |= (BIT0);
+
 
     P4OUT = 0;
     P4DIR = 0xFF;
